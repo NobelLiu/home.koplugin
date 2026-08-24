@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: tr\n"
+
+msgid "Home"
+msgstr "Ana sayfa"
+
+msgid "Open Home"
+msgstr "Ana sayfayı aç"
+
+msgid "Display mode"
+msgstr "Görüntüleme modu"
+
+msgid "Home display mode"
+msgstr "Ana sayfa görüntüleme modu"
+
+msgid "Content padding"
+msgstr "İçerik dolgusu"
+
+msgid "Section title padding"
+msgstr "Bölüm başlığı dolgusu"
+
+msgid "Content gap"
+msgstr "İçerik aralığı"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "Durum çubuğu yatay dolgusu"
+
+msgid "Status bar vertical padding"
+msgstr "Durum çubuğu dikey dolgusu"
+
+msgid "Continue reading row gap"
+msgstr "Devam satır aralığı"
+
+msgid "Content padding: %1"
+msgstr "İçerik dolgusu: %1"
+
+msgid "Section title padding: %1"
+msgstr "Bölüm başlığı dolgusu: %1"
+
+msgid "Content gap: %1"
+msgstr "İçerik aralığı: %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Durum çubuğu yatay dolgusu: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Durum çubuğu dikey dolgusu: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Devam satır aralığı: %1"
+
+msgid "Continue"
+msgstr "Devam"
+
+msgid "Recent"
+msgstr "Son"
+
+msgid "Name"
+msgstr "Ad"
+
+msgid "Read %1%"
+msgstr "%1% okundu"
+
+msgid "Read %1% · %2"
+msgstr "%1% okundu · %2"
+
+msgid "No books in this folder"
+msgstr "Bu klasörde kitap yok"
+
+msgid "Failed to load Home module:\n"
+msgstr "Ana sayfa modülü yüklenemedi:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Ana sayfa oluşturulamadı:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "En son kitabın büyük kapağı ve bir sıra son başlıkla okumaya odaklı ana sayfa."

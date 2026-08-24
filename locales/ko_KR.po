@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko_KR\n"
+
+msgid "Home"
+msgstr "홈"
+
+msgid "Open Home"
+msgstr "홈 열기"
+
+msgid "Display mode"
+msgstr "표시 방식"
+
+msgid "Home display mode"
+msgstr "홈 표시 방식"
+
+msgid "Content padding"
+msgstr "콘텐츠 여백"
+
+msgid "Section title padding"
+msgstr "섹션 제목 여백"
+
+msgid "Content gap"
+msgstr "콘텐츠 간격"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "상태 표시줄 가로 여백"
+
+msgid "Status bar vertical padding"
+msgstr "상태 표시줄 세로 여백"
+
+msgid "Continue reading row gap"
+msgstr "계속 읽기 행 간격"
+
+msgid "Content padding: %1"
+msgstr "콘텐츠 여백: %1"
+
+msgid "Section title padding: %1"
+msgstr "섹션 제목 여백: %1"
+
+msgid "Content gap: %1"
+msgstr "콘텐츠 간격: %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "상태 표시줄 가로 여백: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "상태 표시줄 세로 여백: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "계속 읽기 행 간격: %1"
+
+msgid "Continue"
+msgstr "계속 읽기"
+
+msgid "Recent"
+msgstr "최근"
+
+msgid "Name"
+msgstr "이름"
+
+msgid "Read %1%"
+msgstr "%1% 읽음"
+
+msgid "Read %1% · %2"
+msgstr "%1% 읽음 · %2"
+
+msgid "No books in this folder"
+msgstr "이 폴더에 책이 없습니다"
+
+msgid "Failed to load Home module:\n"
+msgstr "Home 모듈을 불러오지 못했습니다:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Home을 만들지 못했습니다:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "최신 도서의 대형 표지와 최근 제목 한 줄을 보여 주는 독서 중심 홈 화면입니다."

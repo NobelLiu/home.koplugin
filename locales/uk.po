@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uk\n"
+
+msgid "Home"
+msgstr "Головна"
+
+msgid "Open Home"
+msgstr "Відкрити головну"
+
+msgid "Display mode"
+msgstr "Режим відображення"
+
+msgid "Home display mode"
+msgstr "Режим відображення головної"
+
+msgid "Content padding"
+msgstr "Відступ вмісту"
+
+msgid "Section title padding"
+msgstr "Відступ заголовка розділу"
+
+msgid "Content gap"
+msgstr "Інтервал вмісту"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "Горизонтальний відступ рядка стану"
+
+msgid "Status bar vertical padding"
+msgstr "Вертикальний відступ рядка стану"
+
+msgid "Continue reading row gap"
+msgstr "Інтервал рядка «Продовжити»"
+
+msgid "Content padding: %1"
+msgstr "Відступ вмісту: %1"
+
+msgid "Section title padding: %1"
+msgstr "Відступ заголовка розділу: %1"
+
+msgid "Content gap: %1"
+msgstr "Інтервал вмісту: %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Горизонтальний відступ рядка стану: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Вертикальний відступ рядка стану: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Інтервал рядка «Продовжити»: %1"
+
+msgid "Continue"
+msgstr "Продовжити"
+
+msgid "Recent"
+msgstr "Нещодавні"
+
+msgid "Name"
+msgstr "Ім'я"
+
+msgid "Read %1%"
+msgstr "Прочитано %1%"
+
+msgid "Read %1% · %2"
+msgstr "Прочитано %1% · %2"
+
+msgid "No books in this folder"
+msgstr "У цій теці немає книг"
+
+msgid "Failed to load Home module:\n"
+msgstr "Не вдалося завантажити модуль «Головна»:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Не вдалося створити «Головну»:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "Домашній екран для читання з великою обкладинкою останньої книги та рядом нещодавніх назв."

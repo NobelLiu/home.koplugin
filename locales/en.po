@@ -1,0 +1,95 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Open Home"
+msgstr "Open Home"
+
+msgid "Display mode"
+msgstr "Display mode"
+
+msgid "Home display mode"
+msgstr "Home display mode"
+
+msgid "Debug mode"
+msgstr "Debug mode"
+
+msgid "Content padding"
+msgstr "Content padding"
+
+msgid "Section title padding"
+msgstr "Section title padding"
+
+msgid "Content gap"
+msgstr "Content gap"
+
+msgid "Section gap"
+msgstr "Section gap"
+
+msgid "Status bar horizontal padding"
+msgstr "Status bar horizontal padding"
+
+msgid "Status bar vertical padding"
+msgstr "Status bar vertical padding"
+
+msgid "Continue reading row gap"
+msgstr "Continue reading row gap"
+
+msgid "Content padding: %1"
+msgstr "Content padding: %1"
+
+msgid "Section title padding: %1"
+msgstr "Section title padding: %1"
+
+msgid "Content gap: %1"
+msgstr "Content gap: %1"
+
+msgid "Section gap: %1"
+msgstr "Section gap: %1"
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Status bar horizontal padding: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Status bar vertical padding: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Continue reading row gap: %1"
+
+msgid "Continue"
+msgstr "Continue"
+
+msgid "Recent"
+msgstr "Recent"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Read %1%"
+msgstr "Read %1%"
+
+msgid "Read %1% · %2"
+msgstr "Read %1% · %2"
+
+msgid "No books in this folder"
+msgstr "No books in this folder"
+
+msgid "Failed to load Home module:\n"
+msgstr "Failed to load Home module:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Failed to create Home:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."

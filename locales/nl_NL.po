@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: nl_NL\n"
+
+msgid "Home"
+msgstr "Startpagina"
+
+msgid "Open Home"
+msgstr "Startpagina openen"
+
+msgid "Display mode"
+msgstr "Weergavemodus"
+
+msgid "Home display mode"
+msgstr "Weergavemodus startpagina"
+
+msgid "Content padding"
+msgstr "Inhoudsmarge"
+
+msgid "Section title padding"
+msgstr "Sectietitelmarge"
+
+msgid "Content gap"
+msgstr "Inhoudsafstand"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "Horizontale statusbalkmarge"
+
+msgid "Status bar vertical padding"
+msgstr "Verticale statusbalkmarge"
+
+msgid "Continue reading row gap"
+msgstr "Regelafstand Doorgaan"
+
+msgid "Content padding: %1"
+msgstr "Inhoudsmarge: %1"
+
+msgid "Section title padding: %1"
+msgstr "Sectietitelmarge: %1"
+
+msgid "Content gap: %1"
+msgstr "Inhoudsafstand: %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Horizontale statusbalkmarge: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Verticale statusbalkmarge: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Regelafstand Doorgaan: %1"
+
+msgid "Continue"
+msgstr "Doorgaan"
+
+msgid "Recent"
+msgstr "Recent"
+
+msgid "Name"
+msgstr "Naam"
+
+msgid "Read %1%"
+msgstr "Gelezen %1%"
+
+msgid "Read %1% · %2"
+msgstr "Gelezen %1% · %2"
+
+msgid "No books in this folder"
+msgstr "Geen boeken in deze map"
+
+msgid "Failed to load Home module:\n"
+msgstr "Kan Home-module niet laden:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Kan Home niet maken:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "Een leesgerichte startpagina met een grote cover van je nieuwste boek en een rij recente titels."

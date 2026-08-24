@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+
+msgid "Home"
+msgstr "ホーム"
+
+msgid "Open Home"
+msgstr "ホームを開く"
+
+msgid "Display mode"
+msgstr "表示モード"
+
+msgid "Home display mode"
+msgstr "ホーム表示モード"
+
+msgid "Content padding"
+msgstr "コンテンツ余白"
+
+msgid "Section title padding"
+msgstr "セクションタイトル余白"
+
+msgid "Content gap"
+msgstr "コンテンツ間隔"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "ステータスバー水平余白"
+
+msgid "Status bar vertical padding"
+msgstr "ステータスバー垂直余白"
+
+msgid "Continue reading row gap"
+msgstr "続行セクション行間隔"
+
+msgid "Content padding: %1"
+msgstr "コンテンツ余白：%1"
+
+msgid "Section title padding: %1"
+msgstr "セクションタイトル余白：%1"
+
+msgid "Content gap: %1"
+msgstr "コンテンツ間隔：%1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "ステータスバー水平余白：%1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "ステータスバー垂直余白：%1"
+
+msgid "Continue reading row gap: %1"
+msgstr "続行セクション行間隔：%1"
+
+msgid "Continue"
+msgstr "続行"
+
+msgid "Recent"
+msgstr "最近"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Read %1%"
+msgstr "%1% 読了"
+
+msgid "Read %1% · %2"
+msgstr "%1% 読了 · %2"
+
+msgid "No books in this folder"
+msgstr "このフォルダに書籍がありません"
+
+msgid "Failed to load Home module:\n"
+msgstr "Homeモジュールの読み込みに失敗しました：\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Homeの作成に失敗しました：\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "最新の本を大きな表紙で表示し、最近のタイトルを一行に並べた読書向けホーム画面。"

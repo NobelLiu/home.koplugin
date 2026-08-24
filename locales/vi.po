@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: vi\n"
+
+msgid "Home"
+msgstr "Trang chủ"
+
+msgid "Open Home"
+msgstr "Mở trang chủ"
+
+msgid "Display mode"
+msgstr "Chế độ hiển thị"
+
+msgid "Home display mode"
+msgstr "Chế độ hiển thị trang chủ"
+
+msgid "Content padding"
+msgstr "Lề nội dung"
+
+msgid "Section title padding"
+msgstr "Lề tiêu đề mục"
+
+msgid "Content gap"
+msgstr "Khoảng cách nội dung"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "Lề ngang thanh trạng thái"
+
+msgid "Status bar vertical padding"
+msgstr "Lề dọc thanh trạng thái"
+
+msgid "Continue reading row gap"
+msgstr "Khoảng cách hàng Tiếp tục"
+
+msgid "Content padding: %1"
+msgstr "Lề nội dung: %1"
+
+msgid "Section title padding: %1"
+msgstr "Lề tiêu đề mục: %1"
+
+msgid "Content gap: %1"
+msgstr "Khoảng cách nội dung: %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Lề ngang thanh trạng thái: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Lề dọc thanh trạng thái: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Khoảng cách hàng Tiếp tục: %1"
+
+msgid "Continue"
+msgstr "Tiếp tục"
+
+msgid "Recent"
+msgstr "Gần đây"
+
+msgid "Name"
+msgstr "Tên"
+
+msgid "Read %1%"
+msgstr "Đã đọc %1%"
+
+msgid "Read %1% · %2"
+msgstr "Đã đọc %1% · %2"
+
+msgid "No books in this folder"
+msgstr "Không có sách trong thư mục này"
+
+msgid "Failed to load Home module:\n"
+msgstr "Không thể tải mô-đun Trang chủ:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Không thể tạo Trang chủ:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "Màn hình trang chủ tập trung vào đọc sách, với bìa lớn của cuốn sách mới nhất và một hàng các tựa sách gần đây."

@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Open Home"
+msgstr "Abrir inicio"
+
+msgid "Display mode"
+msgstr "Modo de visualización"
+
+msgid "Home display mode"
+msgstr "Modo de visualización del inicio"
+
+msgid "Content padding"
+msgstr "Margen del contenido"
+
+msgid "Section title padding"
+msgstr "Margen del título de sección"
+
+msgid "Content gap"
+msgstr "Espaciado del contenido"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "Margen horizontal de la barra de estado"
+
+msgid "Status bar vertical padding"
+msgstr "Margen vertical de la barra de estado"
+
+msgid "Continue reading row gap"
+msgstr "Espaciado de fila de Continuar"
+
+msgid "Content padding: %1"
+msgstr "Margen del contenido: %1"
+
+msgid "Section title padding: %1"
+msgstr "Margen del título de sección: %1"
+
+msgid "Content gap: %1"
+msgstr "Espaciado del contenido: %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Margen horizontal de la barra de estado: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Margen vertical de la barra de estado: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Espaciado de fila de Continuar: %1"
+
+msgid "Continue"
+msgstr "Continuar"
+
+msgid "Recent"
+msgstr "Reciente"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Read %1%"
+msgstr "Leído %1%"
+
+msgid "Read %1% · %2"
+msgstr "Leído %1% · %2"
+
+msgid "No books in this folder"
+msgstr "No hay libros en esta carpeta"
+
+msgid "Failed to load Home module:\n"
+msgstr "No se pudo cargar el módulo Inicio:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "No se pudo crear Inicio:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "Una pantalla de inicio centrada en la lectura, con una portada destacada del último libro y una fila de títulos recientes."

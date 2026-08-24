@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
+
+msgid "Home"
+msgstr "Domů"
+
+msgid "Open Home"
+msgstr "Otevřít domovskou stránku"
+
+msgid "Display mode"
+msgstr "Režim zobrazení"
+
+msgid "Home display mode"
+msgstr "Režim zobrazení domovské stránky"
+
+msgid "Content padding"
+msgstr "Odsazení obsahu"
+
+msgid "Section title padding"
+msgstr "Odsazení nadpisu sekce"
+
+msgid "Content gap"
+msgstr "Mezera obsahu"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "Horizontální odsazení stavového řádku"
+
+msgid "Status bar vertical padding"
+msgstr "Vertikální odsazení stavového řádku"
+
+msgid "Continue reading row gap"
+msgstr "Mezera řádku Pokračovat"
+
+msgid "Content padding: %1"
+msgstr "Odsazení obsahu: %1"
+
+msgid "Section title padding: %1"
+msgstr "Odsazení nadpisu sekce: %1"
+
+msgid "Content gap: %1"
+msgstr "Mezera obsahu: %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Horizontální odsazení stavového řádku: %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Vertikální odsazení stavového řádku: %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Mezera řádku Pokračovat: %1"
+
+msgid "Continue"
+msgstr "Pokračovat"
+
+msgid "Recent"
+msgstr "Nedávné"
+
+msgid "Name"
+msgstr "Název"
+
+msgid "Read %1%"
+msgstr "Přečteno %1%"
+
+msgid "Read %1% · %2"
+msgstr "Přečteno %1% · %2"
+
+msgid "No books in this folder"
+msgstr "V této složce nejsou žádné knihy"
+
+msgid "Failed to load Home module:\n"
+msgstr "Nepodařilo se načíst modul Domů:\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Nepodařilo se vytvořit Domů:\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "Domovská obrazovka zaměřená na čtení s velkým obalem poslední knihy a řadou nedávných titulů."

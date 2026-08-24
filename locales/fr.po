@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+
+msgid "Home"
+msgstr "Accueil"
+
+msgid "Open Home"
+msgstr "Ouvrir l'accueil"
+
+msgid "Display mode"
+msgstr "Mode d'affichage"
+
+msgid "Home display mode"
+msgstr "Mode d'affichage de l'accueil"
+
+msgid "Content padding"
+msgstr "Marge du contenu"
+
+msgid "Section title padding"
+msgstr "Marge du titre de section"
+
+msgid "Content gap"
+msgstr "Espacement du contenu"
+
+msgid "Section gap"
+msgstr ""
+
+msgid "Status bar horizontal padding"
+msgstr "Marge horizontale de la barre d'état"
+
+msgid "Status bar vertical padding"
+msgstr "Marge verticale de la barre d'état"
+
+msgid "Continue reading row gap"
+msgstr "Espacement de la ligne Continuer"
+
+msgid "Content padding: %1"
+msgstr "Marge du contenu : %1"
+
+msgid "Section title padding: %1"
+msgstr "Marge du titre de section : %1"
+
+msgid "Content gap: %1"
+msgstr "Espacement du contenu : %1"
+
+msgid "Section gap: %1"
+msgstr ""
+
+msgid "Status bar horizontal padding: %1"
+msgstr "Marge horizontale de la barre d'état : %1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "Marge verticale de la barre d'état : %1"
+
+msgid "Continue reading row gap: %1"
+msgstr "Espacement de la ligne Continuer : %1"
+
+msgid "Continue"
+msgstr "Continuer"
+
+msgid "Recent"
+msgstr "Récent"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Read %1%"
+msgstr "Lu à %1%"
+
+msgid "Read %1% · %2"
+msgstr "Lu à %1% · %2"
+
+msgid "No books in this folder"
+msgstr "Aucun livre dans ce dossier"
+
+msgid "Failed to load Home module:\n"
+msgstr "Échec du chargement du module Accueil :\n"
+
+msgid "Failed to create Home:\n"
+msgstr "Échec de la création de l'accueil :\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "Un écran d'accueil axé sur la lecture, avec une grande couverture du dernier livre et une rangée de titres récents."

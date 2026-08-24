@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: home 1.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_TW\n"
+
+msgid "Home"
+msgstr "首頁"
+
+msgid "Open Home"
+msgstr "開啟首頁"
+
+msgid "Display mode"
+msgstr "顯示模式"
+
+msgid "Home display mode"
+msgstr "首頁顯示模式"
+
+msgid "Content padding"
+msgstr "內容邊距"
+
+msgid "Section title padding"
+msgstr "區塊標題邊距"
+
+msgid "Content gap"
+msgstr "內容間距"
+
+msgid "Section gap"
+msgstr "區塊間距"
+
+msgid "Status bar horizontal padding"
+msgstr "狀態列水平邊距"
+
+msgid "Status bar vertical padding"
+msgstr "狀態列垂直邊距"
+
+msgid "Continue reading row gap"
+msgstr "繼續閱讀行間距"
+
+msgid "Content padding: %1"
+msgstr "內容邊距：%1"
+
+msgid "Section title padding: %1"
+msgstr "區塊標題邊距：%1"
+
+msgid "Content gap: %1"
+msgstr "內容間距：%1"
+
+msgid "Section gap: %1"
+msgstr "區塊間距：%1"
+
+msgid "Status bar horizontal padding: %1"
+msgstr "狀態列水平邊距：%1"
+
+msgid "Status bar vertical padding: %1"
+msgstr "狀態列垂直邊距：%1"
+
+msgid "Continue reading row gap: %1"
+msgstr "繼續閱讀行間距：%1"
+
+msgid "Continue"
+msgstr "繼續閱讀"
+
+msgid "Recent"
+msgstr "最近"
+
+msgid "Name"
+msgstr "名稱"
+
+msgid "Read %1%"
+msgstr "已讀 %1%"
+
+msgid "Read %1% · %2"
+msgstr "已讀 %1% · %2"
+
+msgid "No books in this folder"
+msgstr "此資料夾中沒有書籍"
+
+msgid "Failed to load Home module:\n"
+msgstr "載入 Home 模組失敗：\n"
+
+msgid "Failed to create Home:\n"
+msgstr "建立 Home 失敗：\n"
+
+msgid ""
+"A reading-focused home screen with a hero cover for your latest book and a "
+"row of recent titles."
+msgstr "以閱讀為首頁，展示最新書籍的大封面和一行最近閱讀標題。"
