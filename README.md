@@ -4,7 +4,7 @@
 
 > *A reading-focused home screen with a hero cover for your latest book and a row of recent titles.*
 
-<img src="screenshot.png" height="512">
+<img src="screenshot_1.5.png" height="512">
 
 ---
 
