@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_TW\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
-msgstr "首頁"
+msgstr "主頁"
 
 msgid "Open Home"
 msgstr "開啟首頁"
 
-msgid "Display mode"
-msgstr "顯示模式"
-
 msgid "Home display mode"
 msgstr "首頁顯示模式"
 
-msgid "Content padding"
-msgstr "內容邊距"
-
-msgid "Section title padding"
-msgstr "區塊標題邊距"
-
-msgid "Content gap"
-msgstr "內容間距"
-
-msgid "Section gap"
-msgstr "區塊間距"
-
-msgid "Status bar horizontal padding"
-msgstr "狀態列水平邊距"
-
-msgid "Status bar vertical padding"
-msgstr "狀態列垂直邊距"
-
-msgid "Continue reading row gap"
-msgstr "繼續閱讀行間距"
-
-msgid "Content padding: %1"
-msgstr "內容邊距：%1"
-
-msgid "Section title padding: %1"
-msgstr "區塊標題邊距：%1"
-
-msgid "Content gap: %1"
-msgstr "內容間距：%1"
-
-msgid "Section gap: %1"
-msgstr "區塊間距：%1"
-
-msgid "Status bar horizontal padding: %1"
-msgstr "狀態列水平邊距：%1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "狀態列垂直邊距：%1"
-
-msgid "Continue reading row gap: %1"
-msgstr "繼續閱讀行間距：%1"
-
-msgid "Continue"
-msgstr "繼續閱讀"
+msgid "Debug mode"
+msgstr "偵錯模式"
 
 msgid "Recent"
 msgstr "最近"
 
-msgid "Name"
-msgstr "名稱"
+msgid "Last read"
+msgstr "最近閱讀"
 
 msgid "Read %1%"
 msgstr "已讀 %1%"
@@ -88,3 +46,51 @@ msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
 msgstr "以閱讀為首頁，展示最新書籍的大封面和一行最近閱讀標題。"
+
+msgid "Greeting"
+msgstr "問候語"
+
+msgid "Greeting text"
+msgstr "問候語文字"
+
+msgid "Greeting text: %1"
+msgstr "問候語文字：%1"
+
+msgid "Greeting font"
+msgstr "問候語字型"
+
+msgid "Greeting font: %1"
+msgstr "問候語字型：%1"
+
+msgid "Greeting font size"
+msgstr "問候語字型大小"
+
+msgid "Greeting font size: %1"
+msgstr "問候語字型大小：%1"
+
+msgid "Greeting animation speed"
+msgstr "問候語動畫速度"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "問候語動畫速度：%1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "每個字元顯示之間的間隔毫秒數。設為 0 可立即顯示問候語（無動畫）。"
+
+msgid "Start with"
+msgstr "啟動時開啟"
+
+msgid "Hi KOReader"
+msgstr "你好，KOReader"
+
+msgid "Charging"
+msgstr "正在充電"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi 已關閉"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi 未連線"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi 已連線"

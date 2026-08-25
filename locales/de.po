@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
 msgstr "Startseite"
 
 msgid "Open Home"
 msgstr "Startseite öffnen"
 
-msgid "Display mode"
-msgstr "Anzeigemodus"
-
 msgid "Home display mode"
 msgstr "Startseiten-Anzeigemodus"
 
-msgid "Content padding"
-msgstr "Inhaltsabstand"
-
-msgid "Section title padding"
-msgstr "Abschnittstitel-Abstand"
-
-msgid "Content gap"
-msgstr "Abstand zwischen Inhalten"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "Horizontaler Statusleisten-Abstand"
-
-msgid "Status bar vertical padding"
-msgstr "Vertikaler Statusleisten-Abstand"
-
-msgid "Continue reading row gap"
-msgstr "Weiterlesen-Zeilenabstand"
-
-msgid "Content padding: %1"
-msgstr "Inhaltsabstand: %1"
-
-msgid "Section title padding: %1"
-msgstr "Abschnittstitel-Abstand: %1"
-
-msgid "Content gap: %1"
-msgstr "Abstand zwischen Inhalten: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Horizontaler Statusleisten-Abstand: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Vertikaler Statusleisten-Abstand: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Weiterlesen-Zeilenabstand: %1"
-
-msgid "Continue"
-msgstr "Weiter"
+msgid "Debug mode"
+msgstr "Debug-Modus"
 
 msgid "Recent"
 msgstr "Zuletzt"
 
-msgid "Name"
-msgstr "Name"
+msgid "Last read"
+msgstr "Zuletzt gelesen"
 
 msgid "Read %1%"
 msgstr "%1% gelesen"
@@ -79,12 +37,62 @@ msgid "No books in this folder"
 msgstr "Keine Bücher in diesem Ordner"
 
 msgid "Failed to load Home module:\n"
-msgstr "Home-Modul konnte nicht geladen werden:\n"
+msgstr "Startseiten-Modul konnte nicht geladen werden:\n"
 
 msgid "Failed to create Home:\n"
-msgstr "Home konnte nicht erstellt werden:\n"
+msgstr "Startseite konnte nicht erstellt werden:\n"
 
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "Ein leseorientierter Startbildschirm mit großem Cover des neuesten Buches und einer Reihe zuletzt gelesener Titel."
+msgstr ""
+"Eine leseorientierte Startseite mit einem großen Cover deines neuesten Buchs "
+"und einer Reihe zuletzt gelesener Titel."
+
+msgid "Greeting"
+msgstr "Begrüßung"
+
+msgid "Greeting text"
+msgstr "Begrüßungstext"
+
+msgid "Greeting text: %1"
+msgstr "Begrüßungstext: %1"
+
+msgid "Greeting font"
+msgstr "Begrüßungsschrift"
+
+msgid "Greeting font: %1"
+msgstr "Begrüßungsschrift: %1"
+
+msgid "Greeting font size"
+msgstr "Begrüßungsschriftgröße"
+
+msgid "Greeting font size: %1"
+msgstr "Begrüßungsschriftgröße: %1"
+
+msgid "Greeting animation speed"
+msgstr "Animationsgeschwindigkeit der Begrüßung"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Animationsgeschwindigkeit der Begrüßung: %1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Millisekunden zwischen der Einblendung der einzelnen Zeichen. Auf 0 setzen, um die Begrüßung sofort anzuzeigen (keine Animation)."
+
+msgid "Start with"
+msgstr "Starten mit"
+
+msgid "Hi KOReader"
+msgstr "Hallo KOReader"
+
+msgid "Charging"
+msgstr "Lädt"
+
+msgid "Wi-Fi off"
+msgstr "WLAN aus"
+
+msgid "Wi-Fi not connected"
+msgstr "WLAN nicht verbunden"
+
+msgid "Wi-Fi connected"
+msgstr "WLAN verbunden"

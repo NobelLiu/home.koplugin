@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ko_KR\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
 msgstr "홈"
 
 msgid "Open Home"
 msgstr "홈 열기"
 
-msgid "Display mode"
-msgstr "표시 방식"
-
 msgid "Home display mode"
-msgstr "홈 표시 방식"
+msgstr "홈 표시 모드"
 
-msgid "Content padding"
-msgstr "콘텐츠 여백"
-
-msgid "Section title padding"
-msgstr "섹션 제목 여백"
-
-msgid "Content gap"
-msgstr "콘텐츠 간격"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "상태 표시줄 가로 여백"
-
-msgid "Status bar vertical padding"
-msgstr "상태 표시줄 세로 여백"
-
-msgid "Continue reading row gap"
-msgstr "계속 읽기 행 간격"
-
-msgid "Content padding: %1"
-msgstr "콘텐츠 여백: %1"
-
-msgid "Section title padding: %1"
-msgstr "섹션 제목 여백: %1"
-
-msgid "Content gap: %1"
-msgstr "콘텐츠 간격: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "상태 표시줄 가로 여백: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "상태 표시줄 세로 여백: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "계속 읽기 행 간격: %1"
-
-msgid "Continue"
-msgstr "계속 읽기"
+msgid "Debug mode"
+msgstr "디버그 모드"
 
 msgid "Recent"
 msgstr "최근"
 
-msgid "Name"
-msgstr "이름"
+msgid "Last read"
+msgstr "마지막으로 읽음"
 
 msgid "Read %1%"
 msgstr "%1% 읽음"
@@ -79,12 +37,61 @@ msgid "No books in this folder"
 msgstr "이 폴더에 책이 없습니다"
 
 msgid "Failed to load Home module:\n"
-msgstr "Home 모듈을 불러오지 못했습니다:\n"
+msgstr "홈 모듈을 불러오지 못했습니다:\n"
 
 msgid "Failed to create Home:\n"
-msgstr "Home을 만들지 못했습니다:\n"
+msgstr "홈을 만들지 못했습니다:\n"
 
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "최신 도서의 대형 표지와 최근 제목 한 줄을 보여 주는 독서 중심 홈 화면입니다."
+msgstr ""
+"최근에 읽은 책의 큰 표지와 최근 도서 목록을 보여주는 독서 중심 홈 화면입니다."
+
+msgid "Greeting"
+msgstr "인사말"
+
+msgid "Greeting text"
+msgstr "인사말 텍스트"
+
+msgid "Greeting text: %1"
+msgstr "인사말 텍스트: %1"
+
+msgid "Greeting font"
+msgstr "인사말 글꼴"
+
+msgid "Greeting font: %1"
+msgstr "인사말 글꼴: %1"
+
+msgid "Greeting font size"
+msgstr "인사말 글꼴 크기"
+
+msgid "Greeting font size: %1"
+msgstr "인사말 글꼴 크기: %1"
+
+msgid "Greeting animation speed"
+msgstr "환영 문구 애니메이션 속도"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "환영 문구 애니메이션 속도: %1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "각 글자가 나타나는 간격(밀리초)입니다. 0으로 설정하면 애니메이션 없이 즉시 표시합니다."
+
+msgid "Start with"
+msgstr "시작 화면"
+
+msgid "Hi KOReader"
+msgstr "안녕하세요, KOReader"
+
+msgid "Charging"
+msgstr "충전 중"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi 꺼짐"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi 연결 안 됨"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi 연결됨"

@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
 msgstr "Главная"
 
 msgid "Open Home"
-msgstr "Открыть главную"
-
-msgid "Display mode"
-msgstr "Режим отображения"
+msgstr "Открыть главный экран"
 
 msgid "Home display mode"
-msgstr "Режим отображения главной"
+msgstr "Режим отображения главного экрана"
 
-msgid "Content padding"
-msgstr "Отступ содержимого"
-
-msgid "Section title padding"
-msgstr "Отступ заголовка раздела"
-
-msgid "Content gap"
-msgstr "Интервал содержимого"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "Горизонтальный отступ строки состояния"
-
-msgid "Status bar vertical padding"
-msgstr "Вертикальный отступ строки состояния"
-
-msgid "Continue reading row gap"
-msgstr "Интервал строки «Продолжить»"
-
-msgid "Content padding: %1"
-msgstr "Отступ содержимого: %1"
-
-msgid "Section title padding: %1"
-msgstr "Отступ заголовка раздела: %1"
-
-msgid "Content gap: %1"
-msgstr "Интервал содержимого: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Горизонтальный отступ строки состояния: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Вертикальный отступ строки состояния: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Интервал строки «Продолжить»: %1"
-
-msgid "Continue"
-msgstr "Продолжить"
+msgid "Debug mode"
+msgstr "Режим отладки"
 
 msgid "Recent"
 msgstr "Недавние"
 
-msgid "Name"
-msgstr "Имя"
+msgid "Last read"
+msgstr "Последнее чтение"
 
 msgid "Read %1%"
 msgstr "Прочитано %1%"
@@ -79,12 +37,62 @@ msgid "No books in this folder"
 msgstr "В этой папке нет книг"
 
 msgid "Failed to load Home module:\n"
-msgstr "Не удалось загрузить модуль «Главная»:\n"
+msgstr "Не удалось загрузить модуль главного экрана:\n"
 
 msgid "Failed to create Home:\n"
-msgstr "Не удалось создать «Главную»:\n"
+msgstr "Не удалось создать главный экран:\n"
 
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "Домашний экран для чтения с крупной обложкой последней книги и рядом недавних названий."
+msgstr ""
+"Ориентированный на чтение главный экран с крупной обложкой последней книги и "
+"рядом недавних изданий."
+
+msgid "Greeting"
+msgstr "Приветствие"
+
+msgid "Greeting text"
+msgstr "Текст приветствия"
+
+msgid "Greeting text: %1"
+msgstr "Текст приветствия: %1"
+
+msgid "Greeting font"
+msgstr "Шрифт приветствия"
+
+msgid "Greeting font: %1"
+msgstr "Шрифт приветствия: %1"
+
+msgid "Greeting font size"
+msgstr "Размер шрифта приветствия"
+
+msgid "Greeting font size: %1"
+msgstr "Размер шрифта приветствия: %1"
+
+msgid "Greeting animation speed"
+msgstr "Скорость анимации приветствия"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Скорость анимации приветствия: %1 мс"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Миллисекунды между появлением каждого символа. Установите 0, чтобы показывать приветствие сразу (без анимации)."
+
+msgid "Start with"
+msgstr "Начинать с"
+
+msgid "Hi KOReader"
+msgstr "Привет, KOReader"
+
+msgid "Charging"
+msgstr "Зарядка"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi выключен"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi не подключён"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi подключён"

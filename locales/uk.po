@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: uk\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
 msgstr "Головна"
 
 msgid "Open Home"
 msgstr "Відкрити головну"
 
-msgid "Display mode"
-msgstr "Режим відображення"
-
 msgid "Home display mode"
 msgstr "Режим відображення головної"
 
-msgid "Content padding"
-msgstr "Відступ вмісту"
-
-msgid "Section title padding"
-msgstr "Відступ заголовка розділу"
-
-msgid "Content gap"
-msgstr "Інтервал вмісту"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "Горизонтальний відступ рядка стану"
-
-msgid "Status bar vertical padding"
-msgstr "Вертикальний відступ рядка стану"
-
-msgid "Continue reading row gap"
-msgstr "Інтервал рядка «Продовжити»"
-
-msgid "Content padding: %1"
-msgstr "Відступ вмісту: %1"
-
-msgid "Section title padding: %1"
-msgstr "Відступ заголовка розділу: %1"
-
-msgid "Content gap: %1"
-msgstr "Інтервал вмісту: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Горизонтальний відступ рядка стану: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Вертикальний відступ рядка стану: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Інтервал рядка «Продовжити»: %1"
-
-msgid "Continue"
-msgstr "Продовжити"
+msgid "Debug mode"
+msgstr "Режим налагодження"
 
 msgid "Recent"
 msgstr "Нещодавні"
 
-msgid "Name"
-msgstr "Ім'я"
+msgid "Last read"
+msgstr "Останнє читання"
 
 msgid "Read %1%"
 msgstr "Прочитано %1%"
@@ -87,4 +45,54 @@ msgstr "Не вдалося створити «Головну»:\n"
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "Домашній екран для читання з великою обкладинкою останньої книги та рядом нещодавніх назв."
+msgstr ""
+"Домашній екран для читання з великою обкладинкою останньої книги та рядом "
+"нещодавніх назв."
+
+msgid "Greeting"
+msgstr "Привітання"
+
+msgid "Greeting text"
+msgstr "Текст привітання"
+
+msgid "Greeting text: %1"
+msgstr "Текст привітання: %1"
+
+msgid "Greeting font"
+msgstr "Шрифт привітання"
+
+msgid "Greeting font: %1"
+msgstr "Шрифт привітання: %1"
+
+msgid "Greeting font size"
+msgstr "Розмір шрифту привітання"
+
+msgid "Greeting font size: %1"
+msgstr "Розмір шрифту привітання: %1"
+
+msgid "Greeting animation speed"
+msgstr "Швидкість анімації привітання"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Швидкість анімації привітання: %1 мс"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Мілісекунди між появою кожного символу. Встановіть 0, щоб показувати привітання одразу (без анімації)."
+
+msgid "Start with"
+msgstr "Починати з"
+
+msgid "Hi KOReader"
+msgstr "Привіт, KOReader"
+
+msgid "Charging"
+msgstr "Заряджання"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi вимкнено"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi не під'єднано"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi під'єднано"

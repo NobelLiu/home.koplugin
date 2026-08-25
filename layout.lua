@@ -3,14 +3,15 @@ layout.lua — Home layout constants and sizing helpers.
 
 Module structure is split across the individual section files; all sizes are
 computed centrally by mainContentMetrics(). Spacing prefers ui/size tokens;
-user-adjustable values are stored in settings as design px and converted
-through scale().
+spacing/padding values are fixed design px (see DEFAULTS) converted through
+scale().
 --]]
 
 local Blitbuffer = require("ffi/blitbuffer")
 local Device = require("device")
 local Font = require("ui/font")
 local Size = require("ui/size")
+local _ = require("gettext")
 local Screen = Device.screen
 
 local Layout = {}
@@ -22,7 +23,6 @@ Layout.COVER_ASPECT = 1.4 -- height / width (width : height = 1 : 1.4)
 Layout.pad = {
     main     = 2 * Size.padding.large,           -- design 20
     info     = 2 * Size.padding.large,
-    status_v = Size.padding.large + Size.padding.small, -- design 12
 }
 Layout.gap = {
     content = Size.span.horizontal_default,      -- design 10
@@ -37,25 +37,27 @@ Layout.dim = {
     empty_extra = 2 * Size.item.height_large,    -- design 100, vertical centering room
 }
 
--- Design px defaults aligned with Size tokens (user settings 0–60)
+-- Fixed design px values. Spacing/padding are anchored to ui/size presets;
+-- the greeting font size is the only genuinely custom (user-adjustable) value.
 Layout.DEFAULTS = {
-    vstack_padding = 20,
-    section_title_v_pad = 10,
-    content_gap = 10,
-    section_gap = 20,
-    status_side_padding = 20,
-    status_vert_padding = 12,
-    continue_row_gap = 10,
+    greeting_font_size = 26, -- nearest Font sizemap face: "tfont"
+    -- Empty by default: an unset greeting (or one reset to default) falls back
+    -- to the localized greeting in getGreetingText().
+    greeting_text = "",
+    -- Per-character reveal interval for the greeting typewriter animation, in
+    -- milliseconds.
+    greeting_anim_ms = 100,
 }
 
+-- Untranslated msgid for the fallback greeting shown when no custom greeting is
+-- set. Wrapped through _() at read time so it follows the UI language.
+Layout.DEFAULT_GREETING_TEXT = "Hi KOReader"
+
 Layout.SETTING_KEYS = {
-    vstack_padding = "home_vstack_padding",
-    section_title_v_pad = "home_section_title_v_pad",
-    content_gap = "home_content_gap",
-    section_gap = "home_section_gap",
-    status_side_padding = "home_status_side_padding",
-    status_vert_padding = "home_status_vert_padding",
-    continue_row_gap = "home_continue_row_gap",
+    greeting_font = "home_greeting_font",
+    greeting_font_size = "home_greeting_font_size",
+    greeting_text = "home_greeting_text",
+    greeting_anim_ms = "home_greeting_anim_ms",
     debug_layout = "home_debug_layout",
 }
 
@@ -64,20 +66,82 @@ Layout.COLOR_PLACEHOLDER = Blitbuffer.COLOR_LIGHT_GRAY
 Layout.COLOR_MUTED = Blitbuffer.COLOR_DARK_GRAY
 Layout.COLOR_COVER_BORDER = Blitbuffer.COLOR_GRAY_D
 
-local function readSetting(key)
-    if not G_reader_settings then return nil end
-    local val = G_reader_settings:readSetting(Layout.SETTING_KEYS[key])
-    if type(val) == "number" then return val end
-    return Layout.DEFAULTS[key]
+-- Spacing tokens (already scaled), anchored to ui/size presets. These replace
+-- the previous raw design-px constants so downstream sizing uses presets.
+Layout.space = {
+    content_gap          = Size.padding.large,            -- design 10
+    section_title_v_pad  = Size.padding.large,            -- design 10
+    continue_row_gap     = Size.padding.large,            -- design 10
+    vstack_padding       = 2 * Size.padding.large,        -- design 20
+    section_gap          = 2 * Size.span.horizontal_default, -- design 20
+    status_side_padding  = 2 * Size.padding.large,        -- design 20
+    status_vert_padding  = Size.padding.large,            -- design 10 (nearest preset)
+}
+
+--- The greeting label text. Users may set a custom string; when it is empty
+--- (unset, or reset to default), fall back to the localized default greeting
+--- ("Hi KOReader"). Callers can hide the greeting by checking for an empty
+--- return value, but by design this only happens when there is no translation
+--- and no custom text.
+function Layout.getGreetingText()
+    local val = nil
+    if G_reader_settings then
+        val = G_reader_settings:readSetting(Layout.SETTING_KEYS.greeting_text)
+    end
+    if type(val) == "string" and val ~= "" then return val end
+    return _(Layout.DEFAULT_GREETING_TEXT)
 end
 
-function Layout.getVstackPadding() return readSetting("vstack_padding") end
-function Layout.getSectionTitleVPad() return readSetting("section_title_v_pad") end
-function Layout.getContentGap() return readSetting("content_gap") end
-function Layout.getSectionGap() return readSetting("section_gap") end
-function Layout.getStatusSidePadding() return readSetting("status_side_padding") end
-function Layout.getStatusVertPadding() return readSetting("status_vert_padding") end
-function Layout.getContinueRowGap() return readSetting("continue_row_gap") end
+--- Greeting font file path (nil = use the default title face font "cfont").
+function Layout.getGreetingFont()
+    if not G_reader_settings then return nil end
+    local val = G_reader_settings:readSetting(Layout.SETTING_KEYS.greeting_font)
+    if type(val) == "string" and val ~= "" then return val end
+    return nil
+end
+
+Layout.GREETING_FONT_SIZE_MIN = 12
+Layout.GREETING_FONT_SIZE_MAX = 60
+
+--- Greeting font size (orig/unscaled px; Font:getFace applies DPI scaling).
+function Layout.getGreetingFontSize()
+    local size = Layout.DEFAULTS.greeting_font_size
+    if G_reader_settings then
+        local val = G_reader_settings:readSetting(Layout.SETTING_KEYS.greeting_font_size)
+        if type(val) == "number" then size = val end
+    end
+    if size < Layout.GREETING_FONT_SIZE_MIN then size = Layout.GREETING_FONT_SIZE_MIN end
+    if size > Layout.GREETING_FONT_SIZE_MAX then size = Layout.GREETING_FONT_SIZE_MAX end
+    return size
+end
+
+--- Face used to render the greeting label: the chosen font file (or the
+--- default "cfont" title font) at the configured size.
+function Layout.greetingFace()
+    return Font:getFace(Layout.getGreetingFont() or "cfont", Layout.getGreetingFontSize())
+end
+
+Layout.GREETING_ANIM_MS_MIN = 0
+Layout.GREETING_ANIM_MS_MAX = 1000
+
+--- Per-character reveal interval for the greeting typewriter animation, in
+--- milliseconds (as stored/displayed). Clamped to [MIN, MAX].
+function Layout.getGreetingAnimMs()
+    local ms = Layout.DEFAULTS.greeting_anim_ms
+    if G_reader_settings then
+        local val = G_reader_settings:readSetting(Layout.SETTING_KEYS.greeting_anim_ms)
+        if type(val) == "number" then ms = val end
+    end
+    if ms < Layout.GREETING_ANIM_MS_MIN then ms = Layout.GREETING_ANIM_MS_MIN end
+    if ms > Layout.GREETING_ANIM_MS_MAX then ms = Layout.GREETING_ANIM_MS_MAX end
+    return ms
+end
+
+--- Same value as getGreetingAnimMs(), but in seconds for UIManager:scheduleIn.
+--- A value of 0 reveals the whole greeting at once (no animation).
+function Layout.getGreetingAnimInterval()
+    return Layout.getGreetingAnimMs() / 1000
+end
 
 function Layout.isDebugLayout()
     if not G_reader_settings then return false end
@@ -88,9 +152,9 @@ function Layout.scale(n)
     return Screen:scaleBySize(n)
 end
 
---- User setting in design px → scaled pixels.
+--- Preset-anchored spacing token (already scaled) for the given key.
 function Layout.scaledSetting(key)
-    return Layout.scale(readSetting(key))
+    return Layout.space[key]
 end
 
 function Layout.lineHeight(face, em)
@@ -126,9 +190,21 @@ function Layout.mainContentMetrics(screen_w, screen_h, status_bar_h)
     local main_padding = main_h_padding
     local inner_h = main_h - 2 * main_v_padding
     local content_w = Layout.contentWidth(screen_w, main_h_padding)
-    local continue_slot_h = math.floor(inner_h * Layout.PHI) - Layout.gap.section
+    -- The gap between Continue and Recent is built around a 1px divider that must
+    -- land exactly on the golden-ratio point of the full screen height. The
+    -- divider is flanked by equal breathing room on both sides, each equal to the
+    -- Recent header->books gap (content_gap), so the divider->header distance
+    -- matches the header title->book distance.
+    local divider_line_h = Size.line.medium
+    local section_edge_gap = Layout.scaledSetting("content_gap")
+    local section_gap = 2 * section_edge_gap + divider_line_h
+    -- Vertical stack above the divider center is: status bar + main top padding +
+    -- continue slot + top edge gap + half the divider line. Solve for the slot so
+    -- that center sits on screen_h * PHI.
+    local golden_y = math.floor(screen_h * Layout.PHI)
+    local continue_slot_h = golden_y - status_bar_h - main_v_padding
+        - section_edge_gap - math.floor(divider_line_h / 2)
     if continue_slot_h < 0 then continue_slot_h = 0 end
-    local section_gap = Layout.scaledSetting("section_gap")
     local recent_h = inner_h - continue_slot_h - section_gap
     if recent_h < 0 then recent_h = 0 end
     local info_w = math.floor(content_w * Layout.PHI)
@@ -169,6 +245,8 @@ function Layout.mainContentMetrics(screen_w, screen_h, status_bar_h)
         info_text_w = info_w - 2 * info_pad,
         item_gap = item_gap,
         section_title_v_pad = section_title_v_pad,
+        divider_line_h = divider_line_h,
+        section_edge_gap = section_edge_gap,
     }
 end
 

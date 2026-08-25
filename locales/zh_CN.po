@@ -6,14 +6,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 
+# Only plugin-specific strings are listed here. Generic strings shared with
+# KOReader core (e.g. Home, Continue, Name, Cancel, Save, Default, Sort by,
+# Display mode, N/A, file browser, "Start with: %1") are already translated by
+# the core catalog, which loads before this plugin's i18n injection.
+
 msgid "Home"
 msgstr "主页"
 
 msgid "Open Home"
 msgstr "打开主页"
-
-msgid "Display mode"
-msgstr "显示模式"
 
 msgid "Home display mode"
 msgstr "主页显示模式"
@@ -21,56 +23,11 @@ msgstr "主页显示模式"
 msgid "Debug mode"
 msgstr "调试模式"
 
-msgid "Content padding"
-msgstr "内容边距"
-
-msgid "Section title padding"
-msgstr "区块标题边距"
-
-msgid "Content gap"
-msgstr "内容间距"
-
-msgid "Section gap"
-msgstr "区块间距"
-
-msgid "Status bar horizontal padding"
-msgstr "状态栏水平边距"
-
-msgid "Status bar vertical padding"
-msgstr "状态栏垂直边距"
-
-msgid "Continue reading row gap"
-msgstr "继续阅读行间距"
-
-msgid "Content padding: %1"
-msgstr "内容边距：%1"
-
-msgid "Section title padding: %1"
-msgstr "区块标题边距：%1"
-
-msgid "Content gap: %1"
-msgstr "内容间距：%1"
-
-msgid "Section gap: %1"
-msgstr "区块间距：%1"
-
-msgid "Status bar horizontal padding: %1"
-msgstr "状态栏水平边距：%1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "状态栏垂直边距：%1"
-
-msgid "Continue reading row gap: %1"
-msgstr "继续阅读行间距：%1"
-
-msgid "Continue"
-msgstr "继续阅读"
-
 msgid "Recent"
 msgstr "最近"
 
-msgid "Name"
-msgstr "名称"
+msgid "Last read"
+msgstr "最近阅读"
 
 msgid "Read %1%"
 msgstr "已读 %1%"
@@ -91,3 +48,51 @@ msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
 msgstr "以阅读为主页，展示最新书籍的大封面和一行最近阅读标题。"
+
+msgid "Greeting"
+msgstr "问候语"
+
+msgid "Greeting text"
+msgstr "问候语文本"
+
+msgid "Greeting text: %1"
+msgstr "问候语文本：%1"
+
+msgid "Greeting font"
+msgstr "问候语字体"
+
+msgid "Greeting font: %1"
+msgstr "问候语字体：%1"
+
+msgid "Greeting font size"
+msgstr "问候语字号"
+
+msgid "Greeting font size: %1"
+msgstr "问候语字号：%1"
+
+msgid "Greeting animation speed"
+msgstr "问候语动画速度"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "问候语动画速度：%1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "每个字符显示之间的间隔毫秒数。设为 0 可立即显示问候语（无动画）。"
+
+msgid "Start with"
+msgstr "启动时打开"
+
+msgid "Hi KOReader"
+msgstr "你好，KOReader"
+
+msgid "Charging"
+msgstr "正在充电"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi 已关闭"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi 未连接"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi 已连接"

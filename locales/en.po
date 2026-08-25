@@ -6,14 +6,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 
+# Source template. Mostly plugin-specific strings; a few generic strings shared
+# with KOReader core (e.g. "Home") are also translated here so the plugin does
+# not depend on the core catalog resolving them at runtime.
+
 msgid "Home"
 msgstr "Home"
 
 msgid "Open Home"
 msgstr "Open Home"
-
-msgid "Display mode"
-msgstr "Display mode"
 
 msgid "Home display mode"
 msgstr "Home display mode"
@@ -21,56 +22,11 @@ msgstr "Home display mode"
 msgid "Debug mode"
 msgstr "Debug mode"
 
-msgid "Content padding"
-msgstr "Content padding"
-
-msgid "Section title padding"
-msgstr "Section title padding"
-
-msgid "Content gap"
-msgstr "Content gap"
-
-msgid "Section gap"
-msgstr "Section gap"
-
-msgid "Status bar horizontal padding"
-msgstr "Status bar horizontal padding"
-
-msgid "Status bar vertical padding"
-msgstr "Status bar vertical padding"
-
-msgid "Continue reading row gap"
-msgstr "Continue reading row gap"
-
-msgid "Content padding: %1"
-msgstr "Content padding: %1"
-
-msgid "Section title padding: %1"
-msgstr "Section title padding: %1"
-
-msgid "Content gap: %1"
-msgstr "Content gap: %1"
-
-msgid "Section gap: %1"
-msgstr "Section gap: %1"
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Status bar horizontal padding: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Status bar vertical padding: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Continue reading row gap: %1"
-
-msgid "Continue"
-msgstr "Continue"
-
 msgid "Recent"
 msgstr "Recent"
 
-msgid "Name"
-msgstr "Name"
+msgid "Last read"
+msgstr "Last read"
 
 msgid "Read %1%"
 msgstr "Read %1%"
@@ -93,3 +49,51 @@ msgid ""
 msgstr ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
+
+msgid "Greeting"
+msgstr "Greeting"
+
+msgid "Greeting text"
+msgstr "Greeting text"
+
+msgid "Greeting text: %1"
+msgstr "Greeting text: %1"
+
+msgid "Greeting font"
+msgstr "Greeting font"
+
+msgid "Greeting font: %1"
+msgstr "Greeting font: %1"
+
+msgid "Greeting font size"
+msgstr "Greeting font size"
+
+msgid "Greeting font size: %1"
+msgstr "Greeting font size: %1"
+
+msgid "Greeting animation speed"
+msgstr "Greeting animation speed"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Greeting animation speed: %1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+
+msgid "Start with"
+msgstr "Start with"
+
+msgid "Hi KOReader"
+msgstr "Hi KOReader"
+
+msgid "Charging"
+msgstr "Charging"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi off"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi not connected"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi connected"

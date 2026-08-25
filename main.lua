@@ -209,7 +209,13 @@ do
                 and G_reader_settings:isTrue("home_active") then
             local ok_h, _ = pcall(require, "home")
             if ok_h then
-                UIManager:nextTick(_showHomeOverlay)
+                -- Show Home synchronously (NOT on nextTick): showFiles has just
+                -- queued the FileManager's paint but nothing has been rendered
+                -- yet this tick. By showing the fullscreen Home overlay now, in
+                -- the same tick, UIManager coalesces the pending refreshes and
+                -- only repaints the top-most fullscreen widget (Home) — so the
+                -- FileManager never flashes underneath before Home appears.
+                _showHomeOverlay()
             end
         end
         return result

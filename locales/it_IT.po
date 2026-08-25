@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: it_IT\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
 msgstr "Home"
 
 msgid "Open Home"
-msgstr "Apri home"
-
-msgid "Display mode"
-msgstr "Modalità di visualizzazione"
+msgstr "Apri Home"
 
 msgid "Home display mode"
-msgstr "Modalità di visualizzazione home"
+msgstr "Modalità di visualizzazione Home"
 
-msgid "Content padding"
-msgstr "Margine del contenuto"
-
-msgid "Section title padding"
-msgstr "Margine del titolo di sezione"
-
-msgid "Content gap"
-msgstr "Spaziatura del contenuto"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "Margine orizzontale barra di stato"
-
-msgid "Status bar vertical padding"
-msgstr "Margine verticale barra di stato"
-
-msgid "Continue reading row gap"
-msgstr "Spaziatura riga Continua"
-
-msgid "Content padding: %1"
-msgstr "Margine del contenuto: %1"
-
-msgid "Section title padding: %1"
-msgstr "Margine del titolo di sezione: %1"
-
-msgid "Content gap: %1"
-msgstr "Spaziatura del contenuto: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Margine orizzontale barra di stato: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Margine verticale barra di stato: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Spaziatura riga Continua: %1"
-
-msgid "Continue"
-msgstr "Continua"
+msgid "Debug mode"
+msgstr "Modalità debug"
 
 msgid "Recent"
 msgstr "Recenti"
 
-msgid "Name"
-msgstr "Nome"
+msgid "Last read"
+msgstr "Ultima lettura"
 
 msgid "Read %1%"
 msgstr "Letto %1%"
@@ -82,9 +40,59 @@ msgid "Failed to load Home module:\n"
 msgstr "Impossibile caricare il modulo Home:\n"
 
 msgid "Failed to create Home:\n"
-msgstr "Impossibile creare Home:\n"
+msgstr "Impossibile creare la Home:\n"
 
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "Una schermata home incentrata sulla lettura, con una copertina in evidenza dell'ultimo libro e una riga di titoli recenti."
+msgstr ""
+"Una schermata iniziale incentrata sulla lettura, con una copertina in "
+"evidenza dell'ultimo libro e una riga di titoli recenti."
+
+msgid "Greeting"
+msgstr "Saluto"
+
+msgid "Greeting text"
+msgstr "Testo del saluto"
+
+msgid "Greeting text: %1"
+msgstr "Testo del saluto: %1"
+
+msgid "Greeting font"
+msgstr "Carattere del saluto"
+
+msgid "Greeting font: %1"
+msgstr "Carattere del saluto: %1"
+
+msgid "Greeting font size"
+msgstr "Dimensione carattere del saluto"
+
+msgid "Greeting font size: %1"
+msgstr "Dimensione carattere del saluto: %1"
+
+msgid "Greeting animation speed"
+msgstr "Velocità animazione del saluto"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Velocità animazione del saluto: %1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Millisecondi tra la comparsa di ciascun carattere. Imposta a 0 per mostrare il saluto istantaneamente (nessuna animazione)."
+
+msgid "Start with"
+msgstr "Avvia con"
+
+msgid "Hi KOReader"
+msgstr "Ciao KOReader"
+
+msgid "Charging"
+msgstr "In carica"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi disattivato"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi non connesso"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi connesso"

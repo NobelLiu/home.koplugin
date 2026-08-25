@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: tr\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
-msgstr "Ana sayfa"
+msgstr "Ana ekran"
 
 msgid "Open Home"
 msgstr "Ana sayfayı aç"
 
-msgid "Display mode"
-msgstr "Görüntüleme modu"
-
 msgid "Home display mode"
 msgstr "Ana sayfa görüntüleme modu"
 
-msgid "Content padding"
-msgstr "İçerik dolgusu"
-
-msgid "Section title padding"
-msgstr "Bölüm başlığı dolgusu"
-
-msgid "Content gap"
-msgstr "İçerik aralığı"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "Durum çubuğu yatay dolgusu"
-
-msgid "Status bar vertical padding"
-msgstr "Durum çubuğu dikey dolgusu"
-
-msgid "Continue reading row gap"
-msgstr "Devam satır aralığı"
-
-msgid "Content padding: %1"
-msgstr "İçerik dolgusu: %1"
-
-msgid "Section title padding: %1"
-msgstr "Bölüm başlığı dolgusu: %1"
-
-msgid "Content gap: %1"
-msgstr "İçerik aralığı: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Durum çubuğu yatay dolgusu: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Durum çubuğu dikey dolgusu: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Devam satır aralığı: %1"
-
-msgid "Continue"
-msgstr "Devam"
+msgid "Debug mode"
+msgstr "Hata ayıklama modu"
 
 msgid "Recent"
 msgstr "Son"
 
-msgid "Name"
-msgstr "Ad"
+msgid "Last read"
+msgstr "Son okunan"
 
 msgid "Read %1%"
 msgstr "%1% okundu"
@@ -87,4 +45,54 @@ msgstr "Ana sayfa oluşturulamadı:\n"
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "En son kitabın büyük kapağı ve bir sıra son başlıkla okumaya odaklı ana sayfa."
+msgstr ""
+"En son kitabın büyük kapağı ve bir sıra son başlıkla okumaya odaklı ana "
+"sayfa."
+
+msgid "Greeting"
+msgstr "Karşılama"
+
+msgid "Greeting text"
+msgstr "Karşılama metni"
+
+msgid "Greeting text: %1"
+msgstr "Karşılama metni: %1"
+
+msgid "Greeting font"
+msgstr "Karşılama yazı tipi"
+
+msgid "Greeting font: %1"
+msgstr "Karşılama yazı tipi: %1"
+
+msgid "Greeting font size"
+msgstr "Karşılama yazı tipi boyutu"
+
+msgid "Greeting font size: %1"
+msgstr "Karşılama yazı tipi boyutu: %1"
+
+msgid "Greeting animation speed"
+msgstr "Karşılama animasyonu hızı"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Karşılama animasyonu hızı: %1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Her karakterin görünmesi arasındaki milisaniye. Karşılamayı anında göstermek için 0 olarak ayarlayın (animasyon yok)."
+
+msgid "Start with"
+msgstr "Şununla başla"
+
+msgid "Hi KOReader"
+msgstr "Merhaba KOReader"
+
+msgid "Charging"
+msgstr "Şarj oluyor"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi kapalı"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi bağlı değil"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi bağlı"

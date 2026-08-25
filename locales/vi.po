@@ -6,68 +6,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: vi\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
-msgstr "Trang chủ"
+msgstr "Trang chính"
 
 msgid "Open Home"
 msgstr "Mở trang chủ"
 
-msgid "Display mode"
-msgstr "Chế độ hiển thị"
-
 msgid "Home display mode"
 msgstr "Chế độ hiển thị trang chủ"
 
-msgid "Content padding"
-msgstr "Lề nội dung"
-
-msgid "Section title padding"
-msgstr "Lề tiêu đề mục"
-
-msgid "Content gap"
-msgstr "Khoảng cách nội dung"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "Lề ngang thanh trạng thái"
-
-msgid "Status bar vertical padding"
-msgstr "Lề dọc thanh trạng thái"
-
-msgid "Continue reading row gap"
-msgstr "Khoảng cách hàng Tiếp tục"
-
-msgid "Content padding: %1"
-msgstr "Lề nội dung: %1"
-
-msgid "Section title padding: %1"
-msgstr "Lề tiêu đề mục: %1"
-
-msgid "Content gap: %1"
-msgstr "Khoảng cách nội dung: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Lề ngang thanh trạng thái: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Lề dọc thanh trạng thái: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Khoảng cách hàng Tiếp tục: %1"
-
-msgid "Continue"
-msgstr "Tiếp tục"
+msgid "Debug mode"
+msgstr "Chế độ gỡ lỗi"
 
 msgid "Recent"
 msgstr "Gần đây"
 
-msgid "Name"
-msgstr "Tên"
+msgid "Last read"
+msgstr "Đọc gần nhất"
 
 msgid "Read %1%"
 msgstr "Đã đọc %1%"
@@ -87,4 +45,54 @@ msgstr "Không thể tạo Trang chủ:\n"
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "Màn hình trang chủ tập trung vào đọc sách, với bìa lớn của cuốn sách mới nhất và một hàng các tựa sách gần đây."
+msgstr ""
+"Màn hình trang chủ tập trung vào đọc sách, với bìa lớn của cuốn sách mới "
+"nhất và một hàng các tựa sách gần đây."
+
+msgid "Greeting"
+msgstr "Lời chào"
+
+msgid "Greeting text"
+msgstr "Nội dung lời chào"
+
+msgid "Greeting text: %1"
+msgstr "Nội dung lời chào: %1"
+
+msgid "Greeting font"
+msgstr "Phông chữ lời chào"
+
+msgid "Greeting font: %1"
+msgstr "Phông chữ lời chào: %1"
+
+msgid "Greeting font size"
+msgstr "Cỡ chữ lời chào"
+
+msgid "Greeting font size: %1"
+msgstr "Cỡ chữ lời chào: %1"
+
+msgid "Greeting animation speed"
+msgstr "Tốc độ hoạt ảnh lời chào"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Tốc độ hoạt ảnh lời chào: %1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Số mili-giây giữa mỗi lần hiện ký tự. Đặt về 0 để hiển thị lời chào ngay lập tức (không hoạt ảnh)."
+
+msgid "Start with"
+msgstr "Bắt đầu với"
+
+msgid "Hi KOReader"
+msgstr "Chào KOReader"
+
+msgid "Charging"
+msgstr "Đang sạc"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi tắt"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi chưa kết nối"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi đã kết nối"

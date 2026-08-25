@@ -6,85 +6,93 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: nl_NL\n"
 
+# Only plugin-specific strings are listed here; generic strings shared with
+# KOReader core are already translated by the core catalog.
+
 msgid "Home"
-msgstr "Startpagina"
+msgstr "Startscherm"
 
 msgid "Open Home"
-msgstr "Startpagina openen"
-
-msgid "Display mode"
-msgstr "Weergavemodus"
+msgstr "Startscherm openen"
 
 msgid "Home display mode"
-msgstr "Weergavemodus startpagina"
+msgstr "Weergavemodus startscherm"
 
-msgid "Content padding"
-msgstr "Inhoudsmarge"
-
-msgid "Section title padding"
-msgstr "Sectietitelmarge"
-
-msgid "Content gap"
-msgstr "Inhoudsafstand"
-
-msgid "Section gap"
-msgstr ""
-
-msgid "Status bar horizontal padding"
-msgstr "Horizontale statusbalkmarge"
-
-msgid "Status bar vertical padding"
-msgstr "Verticale statusbalkmarge"
-
-msgid "Continue reading row gap"
-msgstr "Regelafstand Doorgaan"
-
-msgid "Content padding: %1"
-msgstr "Inhoudsmarge: %1"
-
-msgid "Section title padding: %1"
-msgstr "Sectietitelmarge: %1"
-
-msgid "Content gap: %1"
-msgstr "Inhoudsafstand: %1"
-
-msgid "Section gap: %1"
-msgstr ""
-
-msgid "Status bar horizontal padding: %1"
-msgstr "Horizontale statusbalkmarge: %1"
-
-msgid "Status bar vertical padding: %1"
-msgstr "Verticale statusbalkmarge: %1"
-
-msgid "Continue reading row gap: %1"
-msgstr "Regelafstand Doorgaan: %1"
-
-msgid "Continue"
-msgstr "Doorgaan"
+msgid "Debug mode"
+msgstr "Foutopsporingsmodus"
 
 msgid "Recent"
 msgstr "Recent"
 
-msgid "Name"
-msgstr "Naam"
+msgid "Last read"
+msgstr "Laatst gelezen"
 
 msgid "Read %1%"
-msgstr "Gelezen %1%"
+msgstr "%1% gelezen"
 
 msgid "Read %1% · %2"
-msgstr "Gelezen %1% · %2"
+msgstr "%1% gelezen · %2"
 
 msgid "No books in this folder"
 msgstr "Geen boeken in deze map"
 
 msgid "Failed to load Home module:\n"
-msgstr "Kan Home-module niet laden:\n"
+msgstr "Kan startschermmodule niet laden:\n"
 
 msgid "Failed to create Home:\n"
-msgstr "Kan Home niet maken:\n"
+msgstr "Kan startscherm niet aanmaken:\n"
 
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
 "row of recent titles."
-msgstr "Een leesgerichte startpagina met een grote cover van je nieuwste boek en een rij recente titels."
+msgstr ""
+"Een leesgericht startscherm met een grote omslag van je laatste boek en een "
+"rij recente titels."
+
+msgid "Greeting"
+msgstr "Begroeting"
+
+msgid "Greeting text"
+msgstr "Begroetingstekst"
+
+msgid "Greeting text: %1"
+msgstr "Begroetingstekst: %1"
+
+msgid "Greeting font"
+msgstr "Begroetingslettertype"
+
+msgid "Greeting font: %1"
+msgstr "Begroetingslettertype: %1"
+
+msgid "Greeting font size"
+msgstr "Begroetingslettergrootte"
+
+msgid "Greeting font size: %1"
+msgstr "Begroetingslettergrootte: %1"
+
+msgid "Greeting animation speed"
+msgstr "Animatiesnelheid begroeting"
+
+msgid "Greeting animation speed: %1 ms"
+msgstr "Animatiesnelheid begroeting: %1 ms"
+
+msgid "Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."
+msgstr "Milliseconden tussen het verschijnen van elk teken. Stel in op 0 om de begroeting direct te tonen (geen animatie)."
+
+msgid "Start with"
+msgstr "Starten met"
+
+msgid "Hi KOReader"
+msgstr "Hallo KOReader"
+
+msgid "Charging"
+msgstr "Bezig met opladen"
+
+msgid "Wi-Fi off"
+msgstr "Wi-Fi uit"
+
+msgid "Wi-Fi not connected"
+msgstr "Wi-Fi niet verbonden"
+
+msgid "Wi-Fi connected"
+msgstr "Wi-Fi verbonden"

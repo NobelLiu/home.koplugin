@@ -3,16 +3,49 @@ book_repository.lua — Book scanning, sorting, metadata and open logic (no UI).
 --]]
 
 local BookList = require("ui/widget/booklist")
+local DataStorage = require("datastorage")
 local Device = require("device")
 local DocSettings = require("docsettings")
 local ReadHistory = require("readhistory")
 local UIManager = require("ui/uimanager")
 local ffiUtil = require("ffi/util")
 local lfs = require("libs/libkoreader-lfs")
+local logger = require("logger")
 local realpath = ffiUtil.realpath
 local util = require("util")
 
 local BookRepository = {}
+
+-- The reading statistics plugin persists per-book total reading time in its
+-- SQLite DB (book.total_read_time, keyed by the book's partial md5), NOT in the
+-- sidecar's `stats` table. Query the DB directly so the "Continue" progress row
+-- can show how long the book has actually been read.
+local STATISTICS_DB = DataStorage:getSettingsDir() .. "/statistics.sqlite3"
+
+--- Looks up the total reading time (in seconds) for a book by its partial md5.
+--- @param md5 string|nil The book's partial_md5_checksum from its sidecar.
+--- @return number Total reading time in seconds (0 if unavailable).
+local function getReadTimeFromStatsDB(md5)
+    if type(md5) ~= "string" or not md5:match("^%x+$") then return 0 end
+    if lfs.attributes(STATISTICS_DB, "mode") ~= "file" then return 0 end
+
+    local read_time = 0
+    local ok, err = pcall(function()
+        local SQ3 = require("lua-ljsqlite3/init")
+        local conn = SQ3.open(STATISTICS_DB, "ro")
+        -- md5 is validated as hex above, so direct interpolation is safe here
+        -- (matches the statistics plugin's own rowexec-based queries).
+        local t = conn:rowexec(string.format(
+            "SELECT sum(total_read_time) FROM book WHERE md5 = '%s';", md5))
+        read_time = tonumber(t) or 0
+        conn:close()
+    end)
+    if not ok then
+        logger.dbg("home: getReadTimeFromStatsDB failed:", err)
+        return 0
+    end
+    return read_time
+end
 
 local ALLOWED_SUFFIXES = {
     epub = true, pdf = true, djvu = true, djv = true,
@@ -61,6 +94,28 @@ local function listBooksInDir(dir)
         end
     end
     return books
+end
+
+local function listSubdirsInDir(dir)
+    local dirs = {}
+    if not dir or lfs.attributes(dir, "mode") ~= "directory" then
+        return dirs
+    end
+    local ok, iter, dir_obj = pcall(lfs.dir, dir)
+    if not ok then return dirs end
+    for name in iter, dir_obj do
+        if #dirs >= MAX_SCAN then break end
+        if name ~= "." and name ~= ".."
+                and not util.stringStartsWith(name, "._")
+                and not util.stringEndsWith(name, ".sdr") then
+            local path = ffiUtil.joinPath(dir, name)
+            local attr = lfs.attributes(path)
+            if attr and attr.mode == "directory" then
+                dirs[#dirs + 1] = path
+            end
+        end
+    end
+    return dirs
 end
 
 local function basename(filepath)
@@ -146,6 +201,102 @@ function BookRepository.getSortedBooks(dir, sort_mode)
     return books
 end
 
+--- Whether a book has a usable cover image (best-effort via BookInfoManager).
+local function hasCover(filepath)
+    local ok_bim, BIM = pcall(require, "bookinfomanager")
+    if not (ok_bim and BIM) then return false end
+    local ok, bi = pcall(BIM.getBookInfo, BIM, filepath, true)
+    return ok and bi and bi.cover_bb ~= nil
+end
+
+--- Books to render inside a folder's mosaic cover: sorted by the current mode,
+--- with cover-bearing books pulled to the front, capped at `n` (default 4).
+function BookRepository.getFolderCoverBooks(dir, sort_mode, n)
+    n = n or 4
+    local books = BookRepository.getSortedBooks(dir, sort_mode)
+    if #books == 0 then return {} end
+    local with_cover, without_cover = {}, {}
+    for _, fp in ipairs(books) do
+        if #with_cover >= n then break end
+        if hasCover(fp) then
+            with_cover[#with_cover + 1] = fp
+        elseif #without_cover < n then
+            without_cover[#without_cover + 1] = fp
+        end
+    end
+    local result = {}
+    for _, fp in ipairs(with_cover) do
+        if #result >= n then break end
+        result[#result + 1] = fp
+    end
+    for _, fp in ipairs(without_cover) do
+        if #result >= n then break end
+        result[#result + 1] = fp
+    end
+    return result
+end
+
+--- Most recent read time across all filtered books directly inside `dir`.
+local function getFolderRecentTime(dir, read_times)
+    local books = listBooksInDir(dir)
+    local best = 0
+    for _, fp in ipairs(books) do
+        local t = getLastReadTime(fp, read_times)
+        if t > best then best = t end
+    end
+    return best
+end
+
+--- Unified Recent entries: filtered books first (in the given sort order),
+--- followed by subfolders. Folders sort by name in "name" mode, or by their
+--- most recently read contained book (descending) in "recent" mode.
+--- @return table list of { type = "book"|"folder", path, name }
+function BookRepository.getRecentEntries(dir, sort_mode)
+    dir = dir or BookRepository.resolveBrowseDir()
+    sort_mode = sort_mode or BookRepository.getSortMode()
+
+    local entries = {}
+    for _, fp in ipairs(BookRepository.getSortedBooks(dir, sort_mode)) do
+        entries[#entries + 1] = { type = "book", path = fp }
+    end
+
+    local subdirs = listSubdirsInDir(dir)
+    if #subdirs > 0 then
+        if sort_mode == "name" then
+            table.sort(subdirs, function(a, b)
+                return ffiUtil.strcoll(basename(a), basename(b))
+            end)
+        else
+            local read_times = buildReadTimeMap()
+            local times = {}
+            for _, d in ipairs(subdirs) do
+                times[d] = getFolderRecentTime(d, read_times)
+            end
+            table.sort(subdirs, function(a, b)
+                if times[a] ~= times[b] then return times[a] > times[b] end
+                return ffiUtil.strcoll(basename(a), basename(b))
+            end)
+        end
+        for _, d in ipairs(subdirs) do
+            entries[#entries + 1] = { type = "folder", path = d, name = basename(d) }
+        end
+    end
+
+    return entries
+end
+
+--- Most recently read book across the entire ReadHistory (path-independent),
+--- used by the Continue hero so it never changes with the browsed directory.
+function BookRepository.getGlobalLastReadBook()
+    ReadHistory:reload()
+    for _, item in ipairs(ReadHistory.hist or {}) do
+        if item.file and lfs.attributes(item.file, "mode") == "file" then
+            return item.file
+        end
+    end
+    return nil
+end
+
 function BookRepository.getBookMeta(filepath)
     local title = filepath:match("([^/]+)%.[^%.]+$") or filepath:match("([^/]+)$") or filepath
     local authors, description, percent, read_time = "", "", 0, 0
@@ -161,8 +312,14 @@ function BookRepository.getBookMeta(filepath)
             if props.authors and props.authors ~= "" then authors = props.authors end
             if props.description and props.description ~= "" then description = props.description end
             percent = ds:readSetting("percent_finished") or percent
-            local stats = ds:readSetting("stats") or {}
-            read_time = stats.total_time_in_sec or 0
+            -- Prefer the statistics DB (authoritative, live total), falling back
+            -- to the sidecar stats snapshot only if the DB has no entry.
+            local md5 = ds:readSetting("partial_md5_checksum")
+            read_time = getReadTimeFromStatsDB(md5)
+            if read_time == 0 then
+                local stats = ds:readSetting("stats") or {}
+                read_time = stats.total_time_in_sec or 0
+            end
         end
     end
 

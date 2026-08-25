@@ -1,5 +1,5 @@
 --[[--
-settings.lua — Home display mode padding settings menu.
+settings.lua — Home display mode settings menu (greeting text + debug mode).
 --]]
 
 local Layout = require("layout")
@@ -8,58 +8,6 @@ local T = require("ffi/util").template
 local _ = require("gettext")
 
 local Settings = {}
-
-local PADDING_ITEMS = {
-    {
-        key = "vstack_padding",
-        label = _("Content padding: %1"),
-        title = _("Content padding"),
-    },
-    {
-        key = "section_title_v_pad",
-        label = _("Section title padding: %1"),
-        title = _("Section title padding"),
-    },
-    {
-        key = "content_gap",
-        label = _("Content gap: %1"),
-        title = _("Content gap"),
-    },
-    {
-        key = "section_gap",
-        label = _("Section gap: %1"),
-        title = _("Section gap"),
-    },
-    {
-        key = "status_side_padding",
-        label = _("Status bar horizontal padding: %1"),
-        title = _("Status bar horizontal padding"),
-    },
-    {
-        key = "status_vert_padding",
-        label = _("Status bar vertical padding: %1"),
-        title = _("Status bar vertical padding"),
-    },
-    {
-        key = "continue_row_gap",
-        label = _("Continue reading row gap: %1"),
-        title = _("Continue reading row gap"),
-    },
-}
-
-local GETTERS = {
-    vstack_padding = Layout.getVstackPadding,
-    section_title_v_pad = Layout.getSectionTitleVPad,
-    content_gap = Layout.getContentGap,
-    section_gap = Layout.getSectionGap,
-    status_side_padding = Layout.getStatusSidePadding,
-    status_vert_padding = Layout.getStatusVertPadding,
-    continue_row_gap = Layout.getContinueRowGap,
-}
-
-local function getPaddingValue(key)
-    return GETTERS[key]()
-end
 
 local function refreshHomeOverlay()
     for widget in UIManager:topdown_widgets_iter() do
@@ -70,11 +18,155 @@ local function refreshHomeOverlay()
     end
 end
 
+local function buildGreetingMenu()
+    return {
+        {
+            text_func = function()
+                return T(_("Greeting text: %1"), Layout.getGreetingText())
+            end,
+            keep_menu_open = true,
+            callback = function(touchmenu_instance)
+                local InputDialog = require("ui/widget/inputdialog")
+                local dialog
+                dialog = InputDialog:new{
+                    title = _("Greeting text"),
+                    input = Layout.getGreetingText(),
+                    buttons = {{
+                        {
+                            text = _("Cancel"),
+                            id = "close",
+                            callback = function()
+                                UIManager:close(dialog)
+                            end,
+                        },
+                        {
+                            text = _("Default"),
+                            callback = function()
+                                UIManager:close(dialog)
+                                G_reader_settings:saveSetting(
+                                    Layout.SETTING_KEYS.greeting_text,
+                                    Layout.DEFAULTS.greeting_text)
+                                refreshHomeOverlay()
+                                if touchmenu_instance then
+                                    touchmenu_instance:updateItems()
+                                end
+                            end,
+                        },
+                        {
+                            text = _("Save"),
+                            is_enter_default = true,
+                            callback = function()
+                                local value = dialog:getInputText() or ""
+                                UIManager:close(dialog)
+                                G_reader_settings:saveSetting(
+                                    Layout.SETTING_KEYS.greeting_text, value)
+                                refreshHomeOverlay()
+                                if touchmenu_instance then
+                                    touchmenu_instance:updateItems()
+                                end
+                            end,
+                        },
+                    }},
+                }
+                UIManager:show(dialog)
+                dialog:onShowKeyboard()
+            end,
+        },
+        {
+            text_func = function()
+                local FontChooser = require("ui/widget/fontchooser")
+                local font_file = Layout.getGreetingFont()
+                local name = _("Default")
+                if font_file then
+                    name = FontChooser.getFontNameText(font_file) or font_file
+                end
+                return T(_("Greeting font: %1"), name)
+            end,
+            keep_menu_open = true,
+            callback = function(touchmenu_instance)
+                local FontChooser = require("ui/widget/fontchooser")
+                UIManager:show(FontChooser:new{
+                    title = _("Greeting font"),
+                    font_file = Layout.getGreetingFont(),
+                    callback = function(font_file)
+                        G_reader_settings:saveSetting(
+                            Layout.SETTING_KEYS.greeting_font, font_file)
+                        refreshHomeOverlay()
+                        if touchmenu_instance then
+                            touchmenu_instance:updateItems()
+                        end
+                    end,
+                })
+            end,
+            hold_callback = function(touchmenu_instance)
+                G_reader_settings:delSetting(Layout.SETTING_KEYS.greeting_font)
+                refreshHomeOverlay()
+                if touchmenu_instance then
+                    touchmenu_instance:updateItems()
+                end
+            end,
+        },
+        {
+            text_func = function()
+                return T(_("Greeting font size: %1"), Layout.getGreetingFontSize())
+            end,
+            keep_menu_open = true,
+            callback = function(touchmenu_instance)
+                local SpinWidget = require("ui/widget/spinwidget")
+                UIManager:show(SpinWidget:new{
+                    value = Layout.getGreetingFontSize(),
+                    value_min = Layout.GREETING_FONT_SIZE_MIN,
+                    value_max = Layout.GREETING_FONT_SIZE_MAX,
+                    value_step = 1,
+                    value_hold_step = 4,
+                    default_value = Layout.DEFAULTS.greeting_font_size,
+                    title_text = _("Greeting font size"),
+                    callback = function(spin)
+                        G_reader_settings:saveSetting(
+                            Layout.SETTING_KEYS.greeting_font_size, spin.value)
+                        refreshHomeOverlay()
+                        if touchmenu_instance then
+                            touchmenu_instance:updateItems()
+                        end
+                    end,
+                })
+            end,
+        },
+        {
+            text_func = function()
+                return T(_("Greeting animation speed: %1 ms"),
+                    Layout.getGreetingAnimMs())
+            end,
+            keep_menu_open = true,
+            callback = function(touchmenu_instance)
+                local SpinWidget = require("ui/widget/spinwidget")
+                UIManager:show(SpinWidget:new{
+                    value = Layout.getGreetingAnimMs(),
+                    value_min = Layout.GREETING_ANIM_MS_MIN,
+                    value_max = Layout.GREETING_ANIM_MS_MAX,
+                    value_step = 10,
+                    value_hold_step = 50,
+                    default_value = Layout.DEFAULTS.greeting_anim_ms,
+                    title_text = _("Greeting animation speed"),
+                    info_text = _("Milliseconds between each character reveal. Set to 0 to show the greeting instantly (no animation)."),
+                    callback = function(spin)
+                        G_reader_settings:saveSetting(
+                            Layout.SETTING_KEYS.greeting_anim_ms, spin.value)
+                        refreshHomeOverlay()
+                        if touchmenu_instance then
+                            touchmenu_instance:updateItems()
+                        end
+                    end,
+                })
+            end,
+        },
+    }
+end
+
 function Settings.buildPaddingMenu()
     local items = {
         {
             text = _("Debug mode"),
-            separator = true,
             keep_menu_open = true,
             checked_func = function()
                 return Layout.isDebugLayout()
@@ -87,34 +179,11 @@ function Settings.buildPaddingMenu()
                 end
             end,
         },
+        {
+            text = _("Greeting"),
+            sub_item_table = buildGreetingMenu(),
+        },
     }
-    for i, spec in ipairs(PADDING_ITEMS) do
-        items[#items + 1] = {
-            text_func = function()
-                return T(spec.label, getPaddingValue(spec.key))
-            end,
-            keep_menu_open = true,
-            callback = function(touchmenu_instance)
-                local SpinWidget = require("ui/widget/spinwidget")
-                local current = getPaddingValue(spec.key)
-                UIManager:show(SpinWidget:new{
-                    value = current,
-                    value_min = 0,
-                    value_max = 60,
-                    value_step = 1,
-                    value_hold_step = 5,
-                    title_text = spec.title,
-                    callback = function(spin)
-                        G_reader_settings:saveSetting(Layout.SETTING_KEYS[spec.key], spin.value)
-                        refreshHomeOverlay()
-                        if touchmenu_instance then
-                            touchmenu_instance:updateItems()
-                        end
-                    end,
-                })
-            end,
-        }
-    end
     return items
 end
 
