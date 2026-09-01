@@ -23,8 +23,20 @@ msgstr "主页显示模式"
 msgid "Debug mode"
 msgstr "调试模式"
 
-msgid "Recent"
-msgstr "最近"
+msgid "Library"
+msgstr "书库"
+
+msgid "Minimum book width"
+msgstr "最小书本宽度"
+
+msgid "Minimum book width: %1"
+msgstr "最小书本宽度：%1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "书库网格中书籍封面可使用的最小宽度。最大宽度会自动设置为该值的 1.2 倍。列数会随窗口宽度自适应；数值越小，每行可容纳的书籍越多。"
+
+msgid "Continue reading"
+msgstr "继续阅读"
 
 msgid "Last read"
 msgstr "最近阅读"
@@ -46,8 +58,8 @@ msgstr "创建 Home 失败：\n"
 
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
-"row of recent titles."
-msgstr "以阅读为主页，展示最新书籍的大封面和一行最近阅读标题。"
+"Library grid of your books."
+msgstr "以阅读为主页，展示最新书籍的大封面和你的书库网格。"
 
 msgid "Greeting"
 msgstr "问候语"

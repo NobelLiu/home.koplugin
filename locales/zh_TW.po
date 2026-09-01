@@ -21,8 +21,20 @@ msgstr "首頁顯示模式"
 msgid "Debug mode"
 msgstr "偵錯模式"
 
+msgid "Minimum book width"
+msgstr "最小書籍寬度"
+
+msgid "Minimum book width: %1"
+msgstr "最小書籍寬度：%1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "書庫網格中書籍封面可使用的最小寬度。最大寬度會自動設定為此值的 1.2 倍。欄數會隨視窗寬度自動調整；數值越小，每行可容納的書籍越多。"
+
 msgid "Recent"
 msgstr "最近"
+
+msgid "Continue reading"
+msgstr "繼續閱讀"
 
 msgid "Last read"
 msgstr "最近閱讀"

@@ -15,7 +15,8 @@ Rows (top to bottom):
   1. Close (X) — right-aligned square box.
   2. Charge   — battery symbol + percentage (+ "charging"), read-only.
   3. Wi-Fi    — label/status tap opens network info; trailing icon toggles Wi-Fi.
-  4. Brightness — a slider (min -> max); trailing brightness icon toggles on/off.
+  4. Brightness — a slider (min -> max, far left turns the frontlight off);
+     trailing icon toggles night mode.
 --]]
 
 local BD = require("ui/bidi")
@@ -33,7 +34,7 @@ local LineWidget = require("ui/widget/linewidget")
 local OverlapGroup = require("ui/widget/overlapgroup")
 local RightContainer = require("ui/widget/container/rightcontainer")
 local Size = require("ui/size")
-local Slider = require("slider")
+local Slider = require("ui/common/slider")
 local TextWidget = require("ui/widget/textwidget")
 local UIManager = require("ui/uimanager")
 local VerticalGroup = require("ui/widget/verticalgroup")
@@ -47,8 +48,8 @@ local CLOSE_ICON = "\u{E855}"           -- xmark
 local WIFI_ON_ICON = "\u{ECA8}"         -- wifi (on: connected or not connected)
 local WIFI_OFF_ICON = "\u{ECA9}"        -- wifi off / disabled
 local WIFI_CONNECTING_ICON = "\u{E8D7}" -- dots-horizontal (connecting in progress)
-local BRIGHTNESS_ON_ICON = "\u{ECA7}"   -- frontlight on / sun
-local BRIGHTNESS_OFF_ICON = "\u{EC93}"  -- frontlight off
+local SUN_ICON = "\u{ECA7}"   -- sun: night mode off (light mode)
+local MOON_ICON = "\u{EC93}"  -- moon: night mode on
 
 -- Golden-ratio panel width.
 local PANEL_WIDTH_RATIO = 0.618
@@ -113,7 +114,7 @@ end
 
 --- A trailing square (row_h x row_h) box with a centered icon glyph widget.
 --- The glyph is wrapped in a FrameContainer so the box can flash-invert on tap
---- (the same feedback as Recent's buttons). Returns:
+--- (the same feedback as Library's buttons). Returns:
 ---   box    - the container to place in the row,
 ---   glyph  - the inner TextWidget (so its glyph can change),
 ---   frame  - the invertible FrameContainer (for tap feedback).
@@ -132,7 +133,7 @@ function StatusPanel:_iconBox(glyph)
 end
 
 --- Flash-invert an icon box's frame as tap feedback, mirroring TapCell (and
---- thus Recent's buttons).
+--- thus Library's buttons).
 function StatusPanel:_flashIcon(frame)
     if not (frame and frame.dimen) then return end
     frame.invert = true
@@ -305,17 +306,23 @@ end
 --- Brightness row: a slider (min -> max) + trailing brightness icon.
 function StatusPanel:_buildBrightnessRow()
     self.fl = {
-        -- The slider's minimum is the lowest *usable* (light-on) intensity, so
-        -- dragging to the far left dims to the minimum brightness rather than
-        -- turning the frontlight off. Turning it off is done via the icon.
-        min = self.powerd.fl_min + 1,
+        -- The slider's minimum is the native off level (fl_min): dragging all
+        -- the way to the left turns the frontlight off. The trailing icon box
+        -- toggles night mode instead (see onToggleNightMode).
+        min = self.powerd.fl_min,
         max = self.powerd.fl_max,
         cur = 0,
     }
-    -- Reflect the user's chosen level, even if the light currently happens to be
-    -- off (frontlightIntensity() reports 0 while off, which would start the
-    -- slider at its minimum instead of the remembered level).
-    pcall(function() self.fl.cur = self:_rememberedIntensity() end)
+    -- Start the slider where the light actually is: the remembered intensity
+    -- when on (frontlightIntensity() reports 0 while off), the min (= off) when
+    -- off.
+    pcall(function()
+        if self.powerd:isFrontlightOn() then
+            self.fl.cur = self:_rememberedIntensity()
+        else
+            self.fl.cur = self.fl.min
+        end
+    end)
 
     -- _makeRow already insets the left widget by one left_pad and reserves the
     -- trailing icon box, so the slider spans exactly from left_pad to the icon
@@ -338,17 +345,16 @@ function StatusPanel:_buildBrightnessRow()
         show_parent = self,
         on_change = function(v) self:_setBrightness(v) end,
     }
-    local icon, glyph, frame = self:_iconBox(self:_brightnessGlyph())
-    self.brightness_icon_glyph = glyph
-    self.brightness_frame = frame
+    local icon, glyph, frame = self:_iconBox(self:_nightModeGlyph())
+    self.night_mode_icon_glyph = glyph
+    self.night_mode_frame = frame
     return self:_makeRow("brightness", self.fl_slider, icon)
 end
 
---- The brightness icon glyph for the current frontlight on/off state.
-function StatusPanel:_brightnessGlyph()
-    local on = false
-    pcall(function() on = self.powerd:isFrontlightOn() end)
-    return on and BRIGHTNESS_ON_ICON or BRIGHTNESS_OFF_ICON
+--- The trailing icon glyph for the current night mode state.
+function StatusPanel:_nightModeGlyph()
+    local on = G_reader_settings:isTrue("night_mode")
+    return on and MOON_ICON or SUN_ICON
 end
 
 function StatusPanel:build()
@@ -532,11 +538,11 @@ function StatusPanel:_refreshWifiIcon()
     UIManager:setDirty(self, "ui", self:_panelRect())
 end
 
---- The user's chosen (remembered) brightness level, independent of whether the
---- light is currently on or off. `frontlightIntensity()` reports 0 while the
---- light is off, which would snap the slider to its minimum; instead read the
---- remembered `fl_intensity` so toggling the light off keeps the slider at the
---- level the user picked.
+--- The last intensity level the light was set to (`fl_intensity`), kept
+--- independent of whether the light is currently on or off, so toggling the
+--- light back on restores the level the user picked. `frontlightIntensity()`
+--- reports 0 while the light is off, which is why we read the remembered value
+--- instead.
 function StatusPanel:_rememberedIntensity()
     local level = self.powerd.fl_intensity
     if type(level) ~= "number" or level < self.fl.min then
@@ -545,21 +551,31 @@ function StatusPanel:_rememberedIntensity()
     return level
 end
 
---- Toggle the frontlight on/off (panel-local action). Reflects the new state
---- in the brightness icon glyph, but keeps the slider at the user's chosen
---- level (toggling the light off must not reset the slider to its minimum).
-function StatusPanel:onToggleFrontlight()
-    pcall(function() self.powerd:toggleFrontlight() end)
-    pcall(function() self.powerd:updateResumeFrontlightState() end)
-    pcall(function() self.fl.cur = self:_rememberedIntensity() end)
-    self:_refreshBrightness()
+--- Toggle night mode (panel-local action): close the panel first, then flip
+--- the screen colors. The panel has to be gone before the repaint, because it
+--- covers the full screen while open, so _repaint skips the widgets underneath
+--- and only the panel area would be repainted with the new colors, leaving the
+--- rest of the screen stale.
+--- NOTE: we must NOT do this via UIManager:broadcastEvent("ToggleNightMode")
+--- (like the Settings menu does): this panel is itself in the widget stack and
+--- defines onToggleNightMode, so the broadcast would be delivered back to us
+--- and recurse forever. Instead, mirror DeviceListener:onToggleNightMode
+--- directly (the CRe call-cache reset there only applies to an open document,
+--- which never exists under this panel).
+function StatusPanel:onToggleNightMode()
+    self:onClose()
+    local night_mode = G_reader_settings:isTrue("night_mode")
+    Screen:toggleNightMode()
+    UIManager:setDirty("all", "full")
+    UIManager:ToggleNightMode(not night_mode)
+    G_reader_settings:saveSetting("night_mode", not night_mode)
     return true
 end
 
---- Refresh the brightness icon glyph and slider from the current state.
+--- Refresh the night mode icon glyph and slider from the current state.
 function StatusPanel:_refreshBrightness()
-    if self.brightness_icon_glyph then
-        self.brightness_icon_glyph:setText(self:_brightnessGlyph())
+    if self.night_mode_icon_glyph then
+        self.night_mode_icon_glyph:setText(self:_nightModeGlyph())
     end
     if self.fl_slider then
         self.fl_slider:setValue(self.fl.cur)
@@ -567,16 +583,21 @@ function StatusPanel:_refreshBrightness()
     UIManager:setDirty(self, "ui", self:_panelRect())
 end
 
---- Apply a native frontlight intensity from the slider. The slider minimum is
---- the lowest usable brightness (light stays on); turning the light off is done
---- via the brightness icon, not by dragging to the minimum.
+--- Apply a brightness from the slider. The slider minimum (fl_min) is the
+--- "off" position: dragging all the way to the left toggles the frontlight
+--- off. Any other position sets the native intensity, which also turns the
+--- light back on if it was off.
 function StatusPanel:_setBrightness(intensity)
     -- Guard against the slider callback re-entering while we sync it back below.
     if self._applying_brightness then return end
     self._applying_brightness = true
 
-    intensity = math.max(self.fl.min, math.min(self.fl.max, intensity))
-    pcall(function() self.powerd:setIntensity(intensity) end)
+    if intensity <= self.fl.min then
+        pcall(function() self.powerd:toggleFrontlight() end)
+    else
+        intensity = math.max(self.powerd.fl_min, math.min(self.fl.max, intensity))
+        pcall(function() self.powerd:setIntensity(intensity) end)
+    end
     pcall(function() self.powerd:updateResumeFrontlightState() end)
     pcall(function() self.fl.cur = self.powerd:frontlightIntensity() end)
 
@@ -621,12 +642,12 @@ function StatusPanel:onTapClose(_, ges)
         return true
     end
 
-    -- Brightness row: tapping the trailing icon box toggles the frontlight.
+    -- Brightness row: tapping the trailing icon box toggles night mode.
     -- (The slider itself handles taps/drags over its own area.)
     local bright_i = self:_rowIndex("brightness")
     if bright_i and ges.pos:intersectWith(self:_iconBoxRect(bright_i)) then
-        self:_flashIcon(self.brightness_frame)
-        self:onToggleFrontlight()
+        self:_flashIcon(self.night_mode_frame)
+        self:onToggleNightMode()
         return true
     end
 

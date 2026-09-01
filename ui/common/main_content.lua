@@ -6,7 +6,6 @@ The four-side padding is applied directly via the FrameContainer's padding
 content_w × inner_h, and the outer frame fills exactly screen_w × main_h.
 --]]
 
-local DebugOverlay = require("debug_overlay")
 local FrameContainer = require("ui/widget/container/framecontainer")
 local Geom = require("ui/geometry")
 
@@ -17,14 +16,14 @@ local MainContent = {}
 --- @param sections table content (e.g. a VerticalGroup)
 --- @return table
 function MainContent.build(screen_w, metrics, sections)
-    local inner = DebugOverlay.wrap("inner", FrameContainer:new{
+    local inner = FrameContainer:new{
         bordersize = 0,
         padding = 0,
         dimen = Geom:new{ w = metrics.content_w, h = metrics.inner_h },
         sections,
-    }, metrics.content_w, metrics.inner_h, "inner")
+    }
 
-    return DebugOverlay.wrap("main_content", FrameContainer:new{
+    return FrameContainer:new{
         bordersize = 0,
         margin = 0,
         padding = 0,
@@ -35,7 +34,7 @@ function MainContent.build(screen_w, metrics, sections)
         width = screen_w,
         height = metrics.main_h,
         inner,
-    }, screen_w, metrics.main_h, "main_content")
+    }
 end
 
 return MainContent

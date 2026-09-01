@@ -21,8 +21,20 @@ msgstr "Weergavemodus startscherm"
 msgid "Debug mode"
 msgstr "Foutopsporingsmodus"
 
+msgid "Minimum book width"
+msgstr "Minimale boekbreedte"
+
+msgid "Minimum book width: %1"
+msgstr "Minimale boekbreedte: %1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "De kleinste breedte die een boekomslag in het bibliotheekraster mag gebruiken. De maximale breedte wordt automatisch afgeleid als 1,2 maal deze waarde. Het aantal kolommen past zich aan de vensterbreedte aan; kleinere waarden passen meer boeken per rij."
+
 msgid "Recent"
 msgstr "Recent"
+
+msgid "Continue reading"
+msgstr "Verder lezen"
 
 msgid "Last read"
 msgstr "Laatst gelezen"

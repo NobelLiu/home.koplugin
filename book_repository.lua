@@ -16,6 +16,12 @@ local util = require("util")
 
 local BookRepository = {}
 
+-- Home-origin marker: set when a reader is opened from Home, so the reader's
+-- "back to file browser" actions can restore Home (whatever the document's own
+-- location) instead of opening the file manager at the document's folder.
+-- The value is the Home root folder at open time (nil when not from Home).
+local _home_origin_dir = nil
+
 -- The reading statistics plugin persists per-book total reading time in its
 -- SQLite DB (book.total_read_time, keyed by the book's partial md5), NOT in the
 -- sidecar's `stats` table. Query the DB directly so the "Continue" progress row
@@ -69,6 +75,24 @@ function BookRepository.resolveBrowseDir()
         if path and path ~= "" then return path end
     end
     return BookRepository.resolveHomeDir()
+end
+
+function BookRepository.setHomeOrigin(dir)
+    _home_origin_dir = dir or BookRepository.resolveHomeDir()
+end
+
+--- Non-destructive peek at the Home-origin marker (nil when the current reader
+--- was not opened from Home). Used e.g. to pick the reader top-menu icon.
+function BookRepository.getHomeOrigin()
+    return _home_origin_dir
+end
+
+--- One-shot: returns the stored Home root folder (and clears the marker), or
+--- nil if the current reader session was not opened from Home.
+function BookRepository.consumeHomeOrigin()
+    local dir = _home_origin_dir
+    _home_origin_dir = nil
+    return dir
 end
 
 local function isAllowedBookName(name)
@@ -247,11 +271,11 @@ local function getFolderRecentTime(dir, read_times)
     return best
 end
 
---- Unified Recent entries: filtered books first (in the given sort order),
+--- Unified Library entries: filtered books first (in the given sort order),
 --- followed by subfolders. Folders sort by name in "name" mode, or by their
 --- most recently read contained book (descending) in "recent" mode.
 --- @return table list of { type = "book"|"folder", path, name }
-function BookRepository.getRecentEntries(dir, sort_mode)
+function BookRepository.getLibraryEntries(dir, sort_mode)
     dir = dir or BookRepository.resolveBrowseDir()
     sort_mode = sort_mode or BookRepository.getSortMode()
 
@@ -344,7 +368,13 @@ end
 
 function BookRepository.openBook(filepath, parent_widget)
     local ReaderUI = require("apps/reader/readerui")
-    if parent_widget then UIManager:close(parent_widget) end
+    if parent_widget then
+        -- Remember that this reader was launched from Home (and which folder
+        -- Home considers its root), so returning to the file browser goes back
+        -- to Home rather than to the document's folder.
+        BookRepository.setHomeOrigin(parent_widget.root_dir or BookRepository.resolveHomeDir())
+        UIManager:close(parent_widget)
+    end
     ReaderUI:showReader(filepath)
 end
 

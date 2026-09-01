@@ -17,7 +17,7 @@ its own area, snapping to integer values (optionally stepped). It is intended
 for the Home screen now and to drive frontlight brightness later.
 
 Usage:
-    local Slider = require("slider")
+    local Slider = require("ui/common/slider")
     local slider = Slider:new{
         width = 623,          -- design px (optional; scaled by screen DPI)
         min = 0,

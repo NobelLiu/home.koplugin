@@ -21,8 +21,20 @@ msgstr "ホーム表示モード"
 msgid "Debug mode"
 msgstr "デバッグモード"
 
+msgid "Minimum book width"
+msgstr "本の最小幅"
+
+msgid "Minimum book width: %1"
+msgstr "本の最小幅：%1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "ライブラリのグリッドで書籍カバーが使用できる最小幅。最大幅はこの値の 1.2 倍として自動的に算出されます。列数はウィンドウの幅に合わせて調整され、値を小さくすると 1 行に多くの書籍を表示できます。"
+
 msgid "Recent"
 msgstr "最近"
+
+msgid "Continue reading"
+msgstr "続きを読む"
 
 msgid "Last read"
 msgstr "最後に読んだ"

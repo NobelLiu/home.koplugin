@@ -1,23 +1,22 @@
 --[[--
-recent_cell.lua — A single book card in the Recent grid.
+library_cell.lua — A single book card in the Library grid.
 --]]
 
 local BD = require("ui/bidi")
-local BookCover = require("book_cover")
+local BookCover = require("ui/library/book_cover")
 local BookRepository = require("book_repository")
 local Geom = require("ui/geometry")
-local Layout = require("layout")
-local DebugOverlay = require("debug_overlay")
-local ProgressBar = require("progress_bar")
-local TapCell = require("tap_cell")
+local Layout = require("ui/common/layout")
+local ProgressBar = require("ui/common/progress_bar")
+local TapCell = require("ui/common/tap_cell")
 local TextBoxWidget = require("ui/widget/textboxwidget")
 local VerticalGroup = require("ui/widget/verticalgroup")
 local VerticalSpan = require("ui/widget/verticalspan")
 
-local RecentCell = {}
+local LibraryCell = {}
 
 --- @return table TapCell
-function RecentCell.build(filepath, cell_w, cover_h, on_open, cell_metrics)
+function LibraryCell.build(filepath, cell_w, cover_h, on_open, cell_metrics)
     cell_metrics = cell_metrics or {}
     local meta = BookRepository.getBookMeta(filepath)
     local gap = cell_metrics.item_gap or Layout.scaledSetting("content_gap")
@@ -27,7 +26,7 @@ function RecentCell.build(filepath, cell_w, cover_h, on_open, cell_metrics)
 
     local col = VerticalGroup:new{
         align = "left",
-        BookCover.build(filepath, cell_w, cover_h, meta),
+        BookCover.build(filepath, cell_w, cover_h, meta, Layout.COLOR_COVER_BORDER),
         VerticalSpan:new{ width = gap },
         ProgressBar.build(cell_w, meta.percent, bar_h),
         VerticalSpan:new{ width = gap },
@@ -39,11 +38,9 @@ function RecentCell.build(filepath, cell_w, cover_h, on_open, cell_metrics)
         },
     }
 
-    local col_w = DebugOverlay.wrap("recent_cell", col, cell_w, cell_h, "recent_cell")
-
-    return TapCell.wrap(col_w, Geom:new{ w = cell_w, h = cell_h }, function()
+    return TapCell.wrap(col, Geom:new{ w = cell_w, h = cell_h }, function()
         on_open(filepath)
     end)
 end
 
-return RecentCell
+return LibraryCell

@@ -21,8 +21,20 @@ msgstr "Ana sayfa görüntüleme modu"
 msgid "Debug mode"
 msgstr "Hata ayıklama modu"
 
+msgid "Minimum book width"
+msgstr "Minimum kitap genişliği"
+
+msgid "Minimum book width: %1"
+msgstr "Minimum kitap genişliği: %1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "Kitaplık ızgarasında bir kitap kapağının kullanabileceği en küçük genişlik. Maksimum genişlik otomatik olarak bu değerin 1,2 katı olarak türetilir. Sütun sayısı pencere genişliğine uyum sağlar; daha küçük değerler satır başına daha fazla kitap sığdırır."
+
 msgid "Recent"
 msgstr "Son"
+
+msgid "Continue reading"
+msgstr "Okumaya devam et"
 
 msgid "Last read"
 msgstr "Son okunan"

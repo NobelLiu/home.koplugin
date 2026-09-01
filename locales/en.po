@@ -22,8 +22,20 @@ msgstr "Home display mode"
 msgid "Debug mode"
 msgstr "Debug mode"
 
-msgid "Recent"
-msgstr "Recent"
+msgid "Library"
+msgstr "Library"
+
+msgid "Minimum book width"
+msgstr "Minimum book width"
+
+msgid "Minimum book width: %1"
+msgstr "Minimum book width: %1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+
+msgid "Continue reading"
+msgstr "Continue Reading"
 
 msgid "Last read"
 msgstr "Last read"
@@ -45,10 +57,10 @@ msgstr "Failed to create Home:\n"
 
 msgid ""
 "A reading-focused home screen with a hero cover for your latest book and a "
-"row of recent titles."
+"Library grid of your books."
 msgstr ""
 "A reading-focused home screen with a hero cover for your latest book and a "
-"row of recent titles."
+"Library grid of your books."
 
 msgid "Greeting"
 msgstr "Greeting"

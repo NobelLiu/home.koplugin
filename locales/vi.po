@@ -21,8 +21,20 @@ msgstr "Chế độ hiển thị trang chủ"
 msgid "Debug mode"
 msgstr "Chế độ gỡ lỗi"
 
+msgid "Minimum book width"
+msgstr "Chiều rộng tối thiểu của sách"
+
+msgid "Minimum book width: %1"
+msgstr "Chiều rộng tối thiểu của sách: %1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "Chiều rộng nhỏ nhất mà bìa sách có thể dùng trong lưới thư viện. Chiều rộng tối đa được tính tự động bằng 1,2 lần giá trị này. Số cột tự động thích ứng với chiều rộng cửa sổ; giá trị nhỏ hơn giúp xếp được nhiều sách hơn mỗi hàng."
+
 msgid "Recent"
 msgstr "Gần đây"
+
+msgid "Continue reading"
+msgstr "Tiếp tục đọc"
 
 msgid "Last read"
 msgstr "Đọc gần nhất"

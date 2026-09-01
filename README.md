@@ -4,14 +4,14 @@
 
 > *A reading-focused home screen with a hero cover for your latest book and a row of recent titles.*
 
-<img src="screenshot_1.5.png" height="512">
+![Home screen screenshot](screenshot.png)
 
 ---
 
 ## Features
 
 - **Continue reading** — A large cover of your last-read book, with its title, author, description, and reading progress. Tap it to jump straight back in.
-- **Personal greeting** — A greeting line at the top of the screen that reveals itself with a subtle typewriter animation when Home appears. You can change the text, font, and size, or turn the animation off entirely.
+- **Personal greeting** — A greeting line at the top of the screen that reveals itself with a subtle typewriter animation when Home appears. You can change the text, font, or turn the animation off entirely.
 - **Recent books** — Your other books shown as cover cards with progress and titles, and you can sort them by most recently read or by name.
 - **Browse folders in place** — Subfolders inside your library appear alongside your books; tap one to step into it, and swipe to page through your recent titles or swipe up to go back to the parent folder — all without leaving Home.
 - **Your home folder is the source** — Home uses the root folder you've configured in KOReader as your library, and displays the books inside it. Set that folder to wherever your books live, and Home will show them.

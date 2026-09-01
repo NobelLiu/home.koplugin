@@ -7,7 +7,7 @@ local Blitbuffer = require("ffi/blitbuffer")
 local BookRepository = require("book_repository")
 local Geom = require("ui/geometry")
 local ImageWidget = require("ui/widget/imagewidget")
-local Layout = require("layout")
+local Layout = require("ui/common/layout")
 local OverlapGroup = require("ui/widget/overlapgroup")
 local Widget = require("ui/widget/widget")
 
@@ -41,26 +41,29 @@ function CoverBorder:paintTo(bb, x, y)
         self.bordersize, self.border_color, 0)
 end
 
-local function wrapWithBorder(inner_widget, w, h)
+local function wrapWithBorder(inner_widget, w, h, border_color)
     local border = borderSize()
     local cover_dimen = Geom:new{ w = w, h = h }
-    return OverlapGroup:new{
+    local cover = OverlapGroup:new{
         dimen = cover_dimen,
         allow_mirroring = false,
         SolidRect:new{ dimen = cover_dimen, color = Blitbuffer.COLOR_WHITE },
         inner_widget,
-        CoverBorder:new{
+    }
+    if border_color then
+        cover[#cover + 1] = CoverBorder:new{
             border_dimen = cover_dimen,
             bordersize = border,
-            border_color = Layout.COLOR_COVER_BORDER,
-        },
-    }
+            border_color = border_color,
+        }
+    end
+    return cover
 end
 
-local function placeholder(w, h)
+local function placeholder(w, h, border_color)
     return wrapWithBorder(
         SolidRect:new{ dimen = Geom:new{ w = w, h = h }, color = Layout.COLOR_PLACEHOLDER },
-        w, h)
+        w, h, border_color)
 end
 
 local function coverScaleFactor(bb, w, h)
@@ -70,7 +73,9 @@ local function coverScaleFactor(bb, w, h)
 end
 
 --- @param meta table|nil pass in to avoid a duplicate metadata lookup
-function BookCover.build(filepath, w, h, meta)
+--- @param border_color Blitbuffer color for the cover's inner border;
+---   when nil, no border is drawn
+function BookCover.build(filepath, w, h, meta, border_color)
     meta = meta or BookRepository.getBookMeta(filepath)
     local cover_wg
 
@@ -90,10 +95,10 @@ function BookCover.build(filepath, w, h, meta)
     end
 
     if not cover_wg then
-        return placeholder(w, h)
+        return placeholder(w, h, border_color)
     end
 
-    return wrapWithBorder(cover_wg, w, h)
+    return wrapWithBorder(cover_wg, w, h, border_color)
 end
 
 return BookCover

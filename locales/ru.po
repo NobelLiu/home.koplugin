@@ -21,8 +21,20 @@ msgstr "Режим отображения главного экрана"
 msgid "Debug mode"
 msgstr "Режим отладки"
 
+msgid "Minimum book width"
+msgstr "Минимальная ширина книги"
+
+msgid "Minimum book width: %1"
+msgstr "Минимальная ширина книги: %1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "Минимальная ширина обложки книги в сетке библиотеки. Максимальная ширина автоматически вычисляется как 1,2 от этого значения. Количество столбцов подстраивается под ширину окна; меньшие значения позволяют разместить больше книг в ряду."
+
 msgid "Recent"
 msgstr "Недавние"
+
+msgid "Continue reading"
+msgstr "Продолжить чтение"
 
 msgid "Last read"
 msgstr "Последнее чтение"

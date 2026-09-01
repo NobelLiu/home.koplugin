@@ -4,7 +4,10 @@ home.koplugin/main.lua — Plugin entry point and FileManager integration layer.
 Architecture:
   Home is shown as an **overlay** on top of the FileManager (FM), which is
   always kept alive. This lets the user still use KOReader's native menus,
-  plugins, gestures and other FM capabilities underneath.
+  plugins and other FM capabilities underneath. Gestures are the exception:
+  while Home is shown, only Home's own gestures are handled, so
+  menu-configured Gestures-plugin gestures never fire on top of Home (see
+  Home:onGesture in ui/home.lua).
 
   main.lua is responsible for:
     - Showing/hiding the Home overlay
@@ -14,8 +17,8 @@ Architecture:
     - Patching the "Start with" settings menu
     - Registering the FM main-menu toggle item and Dispatcher action
 
-  The UI itself lives in home.lua; widget modules are layout / continue_* /
-  recent_* etc.; the status bar is in status_bar.lua.
+  The UI itself lives in ui/home.lua; widget modules are under ui/ (grouped
+  into ui/common/, ui/continue_reading/ and ui/library/).
 --]]
 
 require("i18n").install()
@@ -23,7 +26,9 @@ require("i18n").install()
 local Device = require("device")
 local FileManager = require("apps/filemanager/filemanager")
 local UIManager = require("ui/uimanager")
+local logger = require("logger")
 local lfs = require("libs/libkoreader-lfs")
+local BookRepository = require("book_repository")
 
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local Dispatcher = require("dispatcher")
@@ -93,10 +98,12 @@ local function _showHomeOverlay()
         UIManager:close(existing)
     end
 
-    local ok_h, Home = pcall(require, "home")
+    local ok_h, Home = pcall(require, "ui/home")
     if not ok_h then
+        local err = tostring(Home)
+        logger.err("home.koplugin: failed to load Home module:", err)
         UIManager:show(require("ui/widget/infomessage"):new{
-            text = _("Failed to load Home module:\n") .. tostring(Home),
+            text = _("Failed to load Home module:\n") .. err,
             timeout = 3,
         })
         return
@@ -111,8 +118,10 @@ local function _showHomeOverlay()
         if not ok_i then
             local err = tostring(instance)
             if attempt < 5 and string.find(err, "attempt to perform arithmetic") then
+                logger.warn("home.koplugin: Home.new retry", attempt, "/5 —", err)
                 UIManager:scheduleIn(0.1, function() tryShow(attempt + 1) end)
             else
+                logger.err("home.koplugin: failed to create Home instance after", attempt, "attempt(s):", err)
                 UIManager:show(require("ui/widget/infomessage"):new{
                     text = _("Failed to create Home:\n") .. err,
                     timeout = 5,
@@ -207,7 +216,7 @@ do
                 and home_dir and path
                 and _norm(path) == _norm(home_dir)
                 and G_reader_settings:isTrue("home_active") then
-            local ok_h, _ = pcall(require, "home")
+            local ok_h, _ = pcall(require, "ui/home")
             if ok_h then
                 -- Show Home synchronously (NOT on nextTick): showFiles has just
                 -- queued the FileManager's paint but nothing has been rendered
@@ -219,6 +228,93 @@ do
             end
         end
         return result
+    end
+end
+
+-- ---------------------------------------------------------------------------
+-- Reader → file browser: restore Home when the reader was opened from Home
+-- ---------------------------------------------------------------------------
+-- The reader's "back to file browser" entry points (top-menu filemanager icon,
+-- Home key / "back in reader = file browser", and the end-of-book file-browser
+-- action) normally open FM at the current document's folder. When the reader
+-- was launched from Home, they must instead restore Home, whatever the
+-- document's location, with Home keeping its own root folder as data source.
+do
+    local ReaderUI = require("apps/reader/readerui")
+    local ReaderMenu = require("apps/reader/modules/readermenu")
+    local ReaderStatus = require("apps/reader/modules/readerstatus")
+
+    local function _backToHomeFromReader()
+        local origin_dir = BookRepository.consumeHomeOrigin()
+        if not origin_dir then return false end
+        -- FM lands on Home's root; the overlay is re-shown by switchToHome
+        -- (or already by the showFiles patch when the root matches home_dir).
+        FileManager:showFiles(origin_dir)
+        switchToHome()
+        return true
+    end
+
+    -- Top-menu filemanager button (the reader is closed first, like upstream).
+    if not ReaderMenu._home_back_to_home_patched then
+        ReaderMenu._home_back_to_home_patched = true
+        local _orig_get_default_menu_buttons = ReaderMenu.getDefaultMenuButtons
+        function ReaderMenu:getDefaultMenuButtons()
+            local buttons = _orig_get_default_menu_buttons(self)
+            local fm_btn = buttons and buttons.filemanager
+            if fm_btn and type(fm_btn.callback) == "function" then
+                -- When this reader was opened from Home, the button both looks
+                -- like and acts like "back to Home" instead of "file browser".
+                if BookRepository.getHomeOrigin() then
+                    fm_btn.icon = "home"
+                end
+                fm_btn.callback = function()
+                    self:onTapCloseMenu()
+                    local file = self.ui.document.file
+                    self.ui:onClose()
+                    if not _backToHomeFromReader() then
+                        self.ui:showFileManager(file)
+                    end
+                end
+            end
+            return buttons
+        end
+    end
+
+    -- Home key / "back in reader = file browser".
+    if not ReaderUI._home_back_to_home_patched then
+        ReaderUI._home_back_to_home_patched = true
+        function ReaderUI:onHome()
+            local file = self.document.file
+            self:onClose()
+            if not _backToHomeFromReader() then
+                self:showFileManager(file)
+            end
+            return true
+        end
+    end
+
+    -- End-of-book / book-status "file browser" action.
+    if not ReaderStatus._home_back_to_home_patched then
+        ReaderStatus._home_back_to_home_patched = true
+        function ReaderStatus:openFileBrowser()
+            local file = self.document.file
+            self.ui:onClose()
+            if not _backToHomeFromReader() then
+                self.ui:showFileManager(file)
+            end
+        end
+    end
+
+    -- Any other reader→file-browser transition ("Show folder", password-cancel,
+    -- unsupported file...) consumes the Home-origin marker, so it can never
+    -- misdirect a later session that was not started from Home.
+    if not ReaderUI._home_consume_origin_patched then
+        ReaderUI._home_consume_origin_patched = true
+        local _orig_show_file_manager = ReaderUI.showFileManager
+        function ReaderUI:showFileManager(file, selected_files)
+            BookRepository.consumeHomeOrigin()
+            return _orig_show_file_manager(self, file, selected_files)
+        end
     end
 end
 

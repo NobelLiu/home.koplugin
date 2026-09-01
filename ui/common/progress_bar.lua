@@ -1,9 +1,9 @@
 --[[--
-progress_bar.lua — A thin progress bar (shared by Continue / Recent).
+progress_bar.lua — A thin progress bar (shared by Continue / Library).
 --]]
 
 local Blitbuffer = require("ffi/blitbuffer")
-local Layout = require("layout")
+local Layout = require("ui/common/layout")
 local ProgressWidget = require("ui/widget/progresswidget")
 
 local ProgressBar = {}

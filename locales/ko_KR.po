@@ -21,8 +21,20 @@ msgstr "홈 표시 모드"
 msgid "Debug mode"
 msgstr "디버그 모드"
 
+msgid "Minimum book width"
+msgstr "책 최소 너비"
+
+msgid "Minimum book width: %1"
+msgstr "책 최소 너비: %1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "라이브러리 그리드에서 책 표지가 사용할 수 있는 최소 너비입니다. 최대 너비는 이 값의 1.2배로 자동 계산됩니다. 열 수는 창 너비에 맞게 조정되며, 값이 작을수록 한 행에 더 많은 책이 들어갑니다."
+
 msgid "Recent"
 msgstr "최근"
+
+msgid "Continue reading"
+msgstr "계속 읽기"
 
 msgid "Last read"
 msgstr "마지막으로 읽음"

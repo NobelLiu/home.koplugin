@@ -9,7 +9,7 @@ local Blitbuffer = require("ffi/blitbuffer")
 local BookRepository = require("book_repository")
 local Geom = require("ui/geometry")
 local ImageWidget = require("ui/widget/imagewidget")
-local Layout = require("layout")
+local Layout = require("ui/common/layout")
 local OverlapGroup = require("ui/widget/overlapgroup")
 local Widget = require("ui/widget/widget")
 
@@ -93,7 +93,7 @@ function FolderCover.build(dir, w, h, sort_mode)
 
     local books = BookRepository.getFolderCoverBooks(dir, sort_mode, 4)
 
-    return OverlapGroup:new{
+    local cover = OverlapGroup:new{
         dimen = cover_dimen,
         allow_mirroring = false,
         SolidRect:new{ dimen = cover_dimen, color = Blitbuffer.COLOR_WHITE },
@@ -101,12 +101,21 @@ function FolderCover.build(dir, w, h, sort_mode)
         quadrant(books[2], qw, qh, x2, 0),
         quadrant(books[3], qw, qh, 0, y2),
         quadrant(books[4], qw, qh, x2, y2),
-        CoverBorder:new{
-            border_dimen = cover_dimen,
+    }
+    -- The folder cover itself has no border; instead each sub-cover gets its
+    -- own light-gray inner border (same style as book covers), drawn on top of
+    -- its quadrant.
+    local quadrant_offsets = { { 0, 0 }, { x2, 0 }, { 0, y2 }, { x2, y2 } }
+    for _, off in ipairs(quadrant_offsets) do
+        cover[#cover + 1] = CoverBorder:new{
+            border_dimen = Geom:new{ w = qw, h = qh },
             bordersize = border,
             border_color = Layout.COLOR_COVER_BORDER,
-        },
-    }
+            overlap_offset = { off[1], off[2] },
+        }
+    end
+
+    return cover
 end
 
 return FolderCover

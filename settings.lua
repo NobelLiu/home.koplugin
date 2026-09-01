@@ -1,8 +1,8 @@
 --[[--
-settings.lua — Home display mode settings menu (greeting text + debug mode).
+settings.lua — Home display mode settings menu (greeting text).
 --]]
 
-local Layout = require("layout")
+local Layout = require("ui/common/layout")
 local UIManager = require("ui/uimanager")
 local T = require("ffi/util").template
 local _ = require("gettext")
@@ -108,32 +108,6 @@ local function buildGreetingMenu()
         },
         {
             text_func = function()
-                return T(_("Greeting font size: %1"), Layout.getGreetingFontSize())
-            end,
-            keep_menu_open = true,
-            callback = function(touchmenu_instance)
-                local SpinWidget = require("ui/widget/spinwidget")
-                UIManager:show(SpinWidget:new{
-                    value = Layout.getGreetingFontSize(),
-                    value_min = Layout.GREETING_FONT_SIZE_MIN,
-                    value_max = Layout.GREETING_FONT_SIZE_MAX,
-                    value_step = 1,
-                    value_hold_step = 4,
-                    default_value = Layout.DEFAULTS.greeting_font_size,
-                    title_text = _("Greeting font size"),
-                    callback = function(spin)
-                        G_reader_settings:saveSetting(
-                            Layout.SETTING_KEYS.greeting_font_size, spin.value)
-                        refreshHomeOverlay()
-                        if touchmenu_instance then
-                            touchmenu_instance:updateItems()
-                        end
-                    end,
-                })
-            end,
-        },
-        {
-            text_func = function()
                 return T(_("Greeting animation speed: %1 ms"),
                     Layout.getGreetingAnimMs())
             end,
@@ -163,25 +137,47 @@ local function buildGreetingMenu()
     }
 end
 
+local function buildLibraryMenu()
+    return {
+        {
+            text_func = function()
+                return T(_("Minimum book width: %1"), Layout.getLibraryCellWidthMin())
+            end,
+            keep_menu_open = true,
+            callback = function(touchmenu_instance)
+                local SpinWidget = require("ui/widget/spinwidget")
+                UIManager:show(SpinWidget:new{
+                    value = Layout.getLibraryCellWidthMin(),
+                    value_min = Layout.CELL_W_LIMIT_MIN,
+                    value_max = Layout.CELL_W_LIMIT_MAX,
+                    value_step = 1,
+                    value_hold_step = 10,
+                    default_value = Layout.CELL_W_MIN,
+                    title_text = _("Minimum book width"),
+                    info_text = _("The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."),
+                    callback = function(spin)
+                        G_reader_settings:saveSetting(
+                            Layout.SETTING_KEYS.library_cell_w_min, spin.value)
+                        refreshHomeOverlay()
+                        if touchmenu_instance then
+                            touchmenu_instance:updateItems()
+                        end
+                    end,
+                })
+            end,
+        },
+    }
+end
+
 function Settings.buildPaddingMenu()
     local items = {
         {
-            text = _("Debug mode"),
-            keep_menu_open = true,
-            checked_func = function()
-                return Layout.isDebugLayout()
-            end,
-            callback = function(touchmenu_instance)
-                G_reader_settings:flipNilOrFalse(Layout.SETTING_KEYS.debug_layout)
-                refreshHomeOverlay()
-                if touchmenu_instance then
-                    touchmenu_instance:updateItems()
-                end
-            end,
-        },
-        {
             text = _("Greeting"),
             sub_item_table = buildGreetingMenu(),
+        },
+        {
+            text = _("Library"),
+            sub_item_table = buildLibraryMenu(),
         },
     }
     return items

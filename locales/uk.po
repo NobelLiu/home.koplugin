@@ -21,8 +21,20 @@ msgstr "Режим відображення головної"
 msgid "Debug mode"
 msgstr "Режим налагодження"
 
+msgid "Minimum book width"
+msgstr "Мінімальна ширина книги"
+
+msgid "Minimum book width: %1"
+msgstr "Мінімальна ширина книги: %1"
+
+msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgstr "Найменша ширина, яку може мати обкладинка книги в сітці бібліотеки. Максимальна ширина автоматично обчислюється як 1,2 від цього значення. Кількість стовпців адаптується до ширини вікна; менші значення дають змогу розмістити більше книг у рядку."
+
 msgid "Recent"
 msgstr "Нещодавні"
+
+msgid "Continue reading"
+msgstr "Продовжити читання"
 
 msgid "Last read"
 msgstr "Останнє читання"
