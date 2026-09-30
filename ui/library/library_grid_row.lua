@@ -44,22 +44,24 @@ end
 --- @param entries table list of { type = "book"|"folder", path, name }
 --- @return table Grid widget
 function LibraryGridRow.build(entries, grid_metrics, on_open, on_enter)
-    local content_w = grid_metrics.content_w
-    local cell_w = grid_metrics.cell_w
-    local cover_h = grid_metrics.cover_h
+    local content_width = grid_metrics.content_width
+    local cell_width = grid_metrics.cell_width
+    local cover_height = grid_metrics.cover_height
     local cell_gap = grid_metrics.cell_gap or 0
     local cell_gap_last = grid_metrics.cell_gap_last or cell_gap
     local library_cols = grid_metrics.library_cols
     local library_rows = grid_metrics.library_rows or 1
-    local grid_h = grid_metrics.grid_h
-    local row_h = grid_metrics.row_h
+    local grid_height = grid_metrics.grid_height
+    local row_height = grid_metrics.row_height
     if library_cols <= 0 or library_rows <= 0 then
         return VerticalGroup:new{ align = "left" }
     end
     local cell_metrics = {
         item_gap = grid_metrics.item_gap,
-        title_h = grid_metrics.title_h,
-        bar_h = grid_metrics.bar_h,
+        title_height = grid_metrics.title_height,
+        progress_height = grid_metrics.progress_height,
+        cover_progress_gap = grid_metrics.cover_progress_gap,
+        progress_title_gap = grid_metrics.progress_title_gap,
     }
     local sort_mode = grid_metrics.sort_mode
 
@@ -72,22 +74,29 @@ function LibraryGridRow.build(entries, grid_metrics, on_open, on_enter)
             end
             local entry = entries[r * library_cols + col]
             if entry and entry.type == "folder" then
-                row[#row + 1] = FolderCell.build(entry.path, entry.name, cell_w, cover_h,
+                row[#row + 1] = FolderCell.build(entry.path, entry.name, cell_width, cover_height,
                     on_enter, cell_metrics, sort_mode)
             elseif entry then
-                row[#row + 1] = LibraryCell.build(entry.path, cell_w, cover_h, on_open, cell_metrics)
+                row[#row + 1] = LibraryCell.build(entry.path, cell_width, cover_height, on_open, cell_metrics)
             else
-                row[#row + 1] = HorizontalSpan:new{ width = cell_w }
+                row[#row + 1] = HorizontalSpan:new{ width = cell_width }
             end
         end
         rows[#rows + 1] = row
     end
 
     local grid = VerticalGroup:new{ align = "left" }
-    if library_rows > 1 and grid_h and row_h and row_h > 0 then
-        local slack = grid_h - library_rows * row_h
+    if library_rows > 1 and grid_height and row_height and row_height > 0 then
+        local min_row_gap = grid_metrics.min_row_gap or 0
+        local gap_count = library_rows - 1
+        local fixed_gap = gap_count * min_row_gap
+        local slack = grid_height - library_rows * row_height - fixed_gap
         if slack < 0 then slack = 0 end
-        local row_gaps = distributeRowGaps(slack, library_rows - 1)
+        local extra_gaps = distributeRowGaps(slack, gap_count)
+        local row_gaps = {}
+        for i = 1, gap_count do
+            row_gaps[i] = min_row_gap + (extra_gaps[i] or 0)
+        end
         for i, row in ipairs(rows) do
             if i > 1 then
                 local gap_w = row_gaps[i - 1] or 0
@@ -103,13 +112,13 @@ function LibraryGridRow.build(entries, grid_metrics, on_open, on_enter)
         end
     end
 
-    if grid_h and grid_h > 0 and content_w and content_w > 0 then
+    if grid_height and grid_height > 0 and content_width and content_width > 0 then
         return FrameContainer:new{
             bordersize = 0,
             padding = 0,
-            dimen = Geom:new{ w = content_w, h = grid_h },
+            dimen = Geom:new{ w = content_width, h = grid_height },
             TopContainer:new{
-                dimen = Geom:new{ w = content_w, h = grid_h },
+                dimen = Geom:new{ w = content_width, h = grid_height },
                 grid,
             },
         }

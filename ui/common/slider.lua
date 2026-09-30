@@ -19,7 +19,7 @@ for the Home screen now and to drive frontlight brightness later.
 Usage:
     local Slider = require("ui/common/slider")
     local slider = Slider:new{
-        width = 623,          -- design px (optional; scaled by screen DPI)
+        width = nil,          -- design pt (default Theme.dim.slider_track_width)
         min = 0,
         max = 100,
         value = 16,
@@ -31,31 +31,26 @@ Usage:
 
 local Blitbuffer = require("ffi/blitbuffer")
 local Device = require("device")
-local Font = require("ui/font")
 local FrameContainer = require("ui/widget/container/framecontainer")
 local Geom = require("ui/geometry")
 local GestureRange = require("ui/gesturerange")
 local InputContainer = require("ui/widget/container/inputcontainer")
+local Layout = require("ui/common/layout")
+local pt, px = Layout.pt, Layout.px
 local LineWidget = require("ui/widget/linewidget")
 local Math = require("optmath")
 local OverlapGroup = require("ui/widget/overlapgroup")
 local TextWidget = require("ui/widget/textwidget")
 local UIManager = require("ui/uimanager")
-local Screen = Device.screen
 
--- Design geometry (in design points; scaled by screen DPI at build time).
-local DESIGN_WIDTH = 623
-local DESIGN_HEIGHT = 50
-local BAR_WIDTH = 2              -- Rectangle .frame(width: 2)
-local TRACK_HEIGHT = 2           -- Rectangle .frame(height: 2)
-local LABEL_PADDING = 4          -- Text .padding(4)
-local VALUE_FONT_SIZE = 20       -- value label (two sizes below the 24 design)
+-- Design geometry in pt (scaled by screen DPI at build time via Layout.pt).
+local VALUE_ROLE = "headline"
 
 local Slider = InputContainer:extend{
     name = "home_slider",
-    width = DESIGN_WIDTH,        -- design px
+    width = nil,                 -- design pt; default slider_track_width
     width_px = nil,              -- pre-scaled device px (overrides `width`)
-    height = DESIGN_HEIGHT,      -- design px
+    height = nil,                -- design pt; default slider_row_height
     height_px = nil,             -- pre-scaled device px (overrides `height`)
     min = 0,
     max = 100,
@@ -73,19 +68,20 @@ local Slider = InputContainer:extend{
 }
 
 function Slider:init()
-    -- Scale the design geometry to device pixels. `width_px`/`height_px` let a
-    -- caller pass already-scaled (device-px) sizes instead of design px.
-    self.w = self.width_px or Screen:scaleBySize(self.width)
-    self.h = self.height_px or Screen:scaleBySize(self.height)
-    -- Handle width is dynamic: three times the (scaled) value font size.
-    self.handle_w = Screen:scaleBySize(VALUE_FONT_SIZE) * 3
-    self.bar_w = math.max(1, Screen:scaleBySize(BAR_WIDTH))
-    self.track_h = math.max(1, Screen:scaleBySize(TRACK_HEIGHT))
-    self.label_pad = Screen:scaleBySize(LABEL_PADDING)
+    local dim = Layout.theme().dim
+    local width_pt = self.width or dim.slider_track_width
+    local height_pt = self.height or dim.slider_row_height
+    -- Scale design pt to device px. `width_px`/`height_px` are already px.
+    self.w = self.width_px or pt(width_pt)
+    self.h = self.height_px or pt(height_pt)
+    self.handle_width = pt(Layout.theme().type.size(VALUE_ROLE) * 3)
+    self.bar_width = math.max(px(1), pt(dim.track))
+    self.track_height = math.max(px(1), pt(dim.track))
+    self.label_pad = pt(dim.slider_label_padding)
 
-    -- The handle's left edge travels within [0, w - handle_w] so the whole
+    -- The handle's left edge travels within [0, w - handle_width] so the whole
     -- group is always visible.
-    self.travel = math.max(0, self.w - self.handle_w)
+    self.travel = math.max(0, self.w - self.handle_width)
 
     self.dimen = Geom:new{ w = self.w, h = self.h }
 
@@ -145,9 +141,9 @@ function Slider:_build()
     local handle_left = self:_handleLeft()
 
     -- Layer 1: a single full-width track line, vertically centered.
-    local track_y = math.floor((self.h - self.track_h) / 2)
+    local track_y = math.floor((self.h - self.track_height) / 2)
     local track = LineWidget:new{
-        dimen = Geom:new{ w = self.w, h = self.track_h },
+        dimen = Geom:new{ w = self.w, h = self.track_height },
         background = Blitbuffer.COLOR_BLACK,
         overlap_offset = { 0, track_y },
     }
@@ -170,12 +166,12 @@ end
 function Slider:_buildHandle()
     -- Bars at the group's left edge, horizontal center, and right edge.
     local left_bar_x = 0
-    local center_bar_x = math.floor((self.handle_w - self.bar_w) / 2)
-    local right_bar_x = self.handle_w - self.bar_w
+    local center_bar_x = math.floor((self.handle_width - self.bar_width) / 2)
+    local right_bar_x = self.handle_width - self.bar_width
 
     local function bar(x)
         return LineWidget:new{
-            dimen = Geom:new{ w = self.bar_w, h = self.h },
+            dimen = Geom:new{ w = self.bar_width, h = self.h },
             background = Blitbuffer.COLOR_BLACK,
             overlap_offset = { x, 0 },
         }
@@ -187,10 +183,10 @@ function Slider:_buildHandle()
         padding = 0,
         margin = 0,
         background = Blitbuffer.COLOR_WHITE,
-        width = self.handle_w,
+        width = self.handle_width,
         height = self.h,
         OverlapGroup:new{
-            dimen = Geom:new{ w = self.handle_w, h = self.h },
+            dimen = Geom:new{ w = self.handle_width, h = self.h },
             bar(left_bar_x),
             bar(center_bar_x),
             bar(right_bar_x),
@@ -202,14 +198,14 @@ function Slider:_buildHandle()
     -- content, centered over the handle.
     local label = TextWidget:new{
         text = self:_valueText(),
-        face = Font:getFace("cfont", VALUE_FONT_SIZE),
-        bold = true,
+        face = Layout.face(VALUE_ROLE),
+        bold = false,
         fgcolor = Blitbuffer.COLOR_BLACK,
         padding = 0,
     }
     local label_size = label:getSize()
-    local box_w = label_size.w + self.label_pad * 2
-    local box_h = label_size.h + self.label_pad * 2
+    local box_width = math.floor(label_size.w + self.label_pad * 2 + 0.5)
+    local box_height = math.floor(label_size.h + self.label_pad * 2 + 0.5)
     local value_box = FrameContainer:new{
         bordersize = 0,
         padding = self.label_pad,
@@ -218,12 +214,12 @@ function Slider:_buildHandle()
         label,
     }
     value_box.overlap_offset = {
-        math.floor((self.handle_w - box_w) / 2),
-        math.floor((self.h - box_h) / 2),
+        math.floor((self.handle_width - box_width) / 2),
+        math.floor((self.h - box_height) / 2),
     }
 
     return OverlapGroup:new{
-        dimen = Geom:new{ w = self.handle_w, h = self.h },
+        dimen = Geom:new{ w = self.handle_width, h = self.h },
         backing,
         value_box,
     }
@@ -232,7 +228,7 @@ end
 --- Map an absolute screen x to a value, using the handle-center travel model.
 function Slider:_valueFromX(screen_x)
     if not self.dimen then return self.value end
-    local half = math.floor(self.handle_w / 2)
+    local half = math.floor(self.handle_width / 2)
     -- Position of the handle's left edge if its center were under the pointer.
     local left = (screen_x - self.dimen.x) - half
     local frac = self.travel > 0 and (left / self.travel) or 0

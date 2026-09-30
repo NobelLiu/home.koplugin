@@ -21,14 +21,14 @@ msgstr "Modo de exibição do Início"
 msgid "Debug mode"
 msgstr "Modo de depuração"
 
-msgid "Minimum book width"
+msgid "Minimal book width"
 msgstr "Largura mínima do livro"
 
-msgid "Minimum book width: %1"
-msgstr "Largura mínima do livro: %1"
+msgid "Minimal book width: %1 pt"
+msgstr "Largura mínima do livro: %1 pt"
 
-msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
-msgstr "A menor largura que uma capa de livro pode usar na grade da biblioteca. A largura máxima é derivada automaticamente como 1,2 vez este valor. O número de colunas se adapta à largura da janela; valores menores cabem mais livros por linha."
+msgid "Design pt for the smallest book cover width in the Library grid. Converted to device pixels via screen scale. Maximum is 1.2× this value. Smaller values fit more books per row."
+msgstr "Pontos de design (pt) para a menor largura de capa na grade da biblioteca. Convertidos em pixels do dispositivo pela escala da tela. O máximo é 1,2 vez este valor. Valores menores cabem mais livros por linha."
 
 msgid "Recent"
 msgstr "Recentes"

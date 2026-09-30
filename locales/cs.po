@@ -21,14 +21,14 @@ msgstr "Režim zobrazení domovské stránky"
 msgid "Debug mode"
 msgstr "Režim ladění"
 
-msgid "Minimum book width"
+msgid "Minimal book width"
 msgstr "Minimální šířka knihy"
 
-msgid "Minimum book width: %1"
-msgstr "Minimální šířka knihy: %1"
+msgid "Minimal book width: %1 pt"
+msgstr "Minimální šířka knihy: %1 pt"
 
-msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
-msgstr "Nejmenší šířka, kterou může obálka knihy v mřížce knihovny použít. Maximální šířka se automaticky odvodí jako 1,2násobek této hodnoty. Počet sloupců se přizpůsobuje šířce okna; menší hodnoty umožňují více knih v řádku."
+msgid "Design pt for the smallest book cover width in the Library grid. Converted to device pixels via screen scale. Maximum is 1.2× this value. Smaller values fit more books per row."
+msgstr "Designové body (pt) pro nejmenší šířku obálky v mřížce knihovny. Převádějí se na pixely zařízení podle měřítka obrazovky. Maximum je 1,2násobek této hodnoty. Menší hodnoty umožňují více knih v řádku."
 
 msgid "Recent"
 msgstr "Nedávné"

@@ -1,79 +1,74 @@
 --[[--
-tap_cell.lua — A tappable cell wrapping an arbitrary child widget and
-responding to taps.
+tap_cell.lua — Tappable region wrapping an arbitrary child widget.
 
-When `highlight` is set, the cell renders a short black inverted-rectangle
-feedback on tap (the same visual language KOReader uses for buttons).
---]]
+When width/height is larger than the child, content is centered in the tap
+area (InputContainer defaults to top-left, which pins status-bar glyphs high).
+]]
 
-local FrameContainer = require("ui/widget/container/framecontainer")
 local GestureRange = require("ui/gesturerange")
+local Geom = require("ui/geometry")
 local InputContainer = require("ui/widget/container/inputcontainer")
-local UIManager = require("ui/uimanager")
 
-local TapCell = InputContainer:extend{}
+local TapCell = InputContainer:extend{
+    enabled = true,
+    callback = nil,
+    on_tap = nil,
+    align = "center",
+    vertical_align = "center",
+}
 
 function TapCell:init()
-    self.dimen = self.cell_dimen
-    if self.highlight then
-        -- Wrap the content so we have a paintable frame to invert on tap.
-        self.frame = FrameContainer:new{
-            bordersize = 0,
-            padding = 0,
-            margin = 0,
-            dimen = self.cell_dimen,
-            self.content,
+    self[1] = self.content
+    if self.cell_dimen then
+        self.dimen = self.cell_dimen
+    elseif self.width or self.height then
+        self.dimen = Geom:new{
+            w = math.floor((self.width or self[1]:getSize().w) + 0.5),
+            h = math.floor((self.height or self[1]:getSize().h) + 0.5),
         }
-        self[1] = self.frame
-    else
-        self[1] = self.content
     end
     self.ges_events = {
         TapCell = {
             GestureRange:new{
                 ges = "tap",
-                range = self.dimen,
+                range = function()
+                    if self.dimen then
+                        return self.dimen
+                    end
+                    local size = self[1] and self[1]:getSize()
+                    if size then
+                        return Geom:new{
+                            x = 0,
+                            y = 0,
+                            w = math.floor((size.w or 0) + 0.5),
+                            h = math.floor((size.h or 0) + 0.5),
+                        }
+                    end
+                end,
             },
         },
     }
 end
 
-function TapCell:_doFeedbackHighlight()
-    self.frame.invert = true
-    UIManager:widgetInvert(self.frame, self.frame.dimen.x, self.frame.dimen.y)
-    UIManager:setDirty(nil, "fast", self.frame.dimen)
-end
-
-function TapCell:_undoFeedbackHighlight()
-    self.frame.invert = false
-    UIManager:widgetInvert(self.frame, self.frame.dimen.x, self.frame.dimen.y)
-    UIManager:setDirty(nil, "fast", self.frame.dimen)
-end
-
 function TapCell:onTapCell()
-    if not self.on_tap then return true end
-
-    if self.highlight and self.frame and self.frame.dimen then
-        self:_doFeedbackHighlight()
-        UIManager:forceRePaint()
-        self:_undoFeedbackHighlight()
+    if not self.enabled then
+        return true
     end
-
-    self.on_tap()
+    local fn = self.callback or self.on_tap
+    if fn then
+        fn()
+    end
     return true
 end
 
 --- @param content table
 --- @param dimen table Geom
 --- @param on_tap function|nil
---- @param opts table|nil { highlight = boolean }
-function TapCell.wrap(content, dimen, on_tap, opts)
-    opts = opts or {}
+function TapCell.wrap(content, dimen, on_tap)
     return TapCell:new{
         content = content,
         cell_dimen = dimen,
         on_tap = on_tap,
-        highlight = opts.highlight,
     }
 end
 

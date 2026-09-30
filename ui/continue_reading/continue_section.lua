@@ -15,11 +15,12 @@ local HorizontalGroup = require("ui/widget/horizontalgroup")
 local ContinueSection = {}
 
 --- @return table Continue widget
-function ContinueSection.build(filepath, metrics, on_open)
+function ContinueSection.build(filepath, metrics, on_open, opts)
+    opts = opts or {}
     local meta = BookRepository.getBookMeta(filepath)
 
     local cover_col = ContinueCover.build(filepath, metrics)
-    local info_col = ContinueInfoColumn.build(meta, metrics)
+    local info_col = ContinueInfoColumn.build(meta, metrics, opts)
 
     local content_row = HorizontalGroup:new{
         align = "top",

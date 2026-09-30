@@ -21,14 +21,14 @@ msgstr "Режим отображения главного экрана"
 msgid "Debug mode"
 msgstr "Режим отладки"
 
-msgid "Minimum book width"
+msgid "Minimal book width"
 msgstr "Минимальная ширина книги"
 
-msgid "Minimum book width: %1"
-msgstr "Минимальная ширина книги: %1"
+msgid "Minimal book width: %1 pt"
+msgstr "Минимальная ширина книги: %1 pt"
 
-msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
-msgstr "Минимальная ширина обложки книги в сетке библиотеки. Максимальная ширина автоматически вычисляется как 1,2 от этого значения. Количество столбцов подстраивается под ширину окна; меньшие значения позволяют разместить больше книг в ряду."
+msgid "Design pt for the smallest book cover width in the Library grid. Converted to device pixels via screen scale. Maximum is 1.2× this value. Smaller values fit more books per row."
+msgstr "Дизайн-пункты (pt) для минимальной ширины обложки в сетке библиотеки. Пересчитываются в пиксели устройства по масштабу экрана. Максимум — 1,2 от этого значения. Меньшие значения позволяют разместить больше книг в ряду."
 
 msgid "Recent"
 msgstr "Недавние"

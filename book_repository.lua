@@ -16,6 +16,12 @@ local util = require("util")
 
 local BookRepository = {}
 
+-- Collate ids whose item_func needs a FileManager ui (ui.bookinfo:getDocProps).
+-- Used to guard the folder-cover mosaic path, which has no ui available.
+local UI_DEPENDENT_COLLATES = {
+    title = true, authors = true, series = true, keywords = true, rating = true,
+}
+
 -- Home-origin marker: set when a reader is opened from Home, so the reader's
 -- "back to file browser" actions can restore Home (whatever the document's own
 -- location) instead of opening the file manager at the document's folder.
@@ -85,6 +91,20 @@ end
 --- was not opened from Home). Used e.g. to pick the reader top-menu icon.
 function BookRepository.getHomeOrigin()
     return _home_origin_dir
+end
+
+--- True when the reader's "back to file browser" action should restore Home
+--- (not the document folder in FileManager). Matches _backToHomeFromReader().
+function BookRepository.readerBackGoesToHome()
+    return _home_origin_dir ~= nil
+end
+
+--- KOReader top-menu icon for the reader filemanager/home back button.
+function BookRepository.readerBackIcon()
+    if BookRepository.readerBackGoesToHome() then
+        return "home"
+    end
+    return "appbar.filebrowser"
 end
 
 --- One-shot: returns the stored Home root folder (and clears the marker), or
@@ -173,26 +193,99 @@ local function getLastReadTime(filepath, read_times)
     return 0
 end
 
-local SORT_MODE_KEY = "home_sort_mode"
-
-function BookRepository.getSortMode()
-    local mode = G_reader_settings:readSetting(SORT_MODE_KEY)
-    if mode == "name" then return "name" end
-    return "recent"
+--- The Library shares KOReader's global FileManager "Sort by" setting
+--- (G_reader_settings "collate"), along with "reverse_collate" and
+--- "collate_mixed". All sort modes are defined once in BookList.collates.
+--- Mirrors FileChooser:getCollate(): returns the collate table plus its id,
+--- falling back to "strcoll" (name) for an unknown/missing setting.
+function BookRepository.getCollate()
+    local BookList = require("ui/widget/booklist")
+    local collate_id = G_reader_settings:readSetting("collate", "strcoll")
+    local collate = BookList.collates[collate_id]
+    if collate ~= nil then
+        return collate, collate_id
+    end
+    G_reader_settings:saveSetting("collate", "strcoll")
+    return BookList.collates.strcoll, "strcoll"
 end
 
-function BookRepository.setSortMode(mode)
-    G_reader_settings:saveSetting(SORT_MODE_KEY, mode == "name" and "name" or "recent")
+--- Save the global FileManager "Sort by" (collate) setting. `id` must be a
+--- BookList.collates key; unknown ids fall back to "strcoll".
+function BookRepository.setCollate(id)
+    local BookList = require("ui/widget/booklist")
+    if not (id and BookList.collates[id]) then
+        id = "strcoll"
+    end
+    G_reader_settings:saveSetting("collate", id)
 end
 
-function BookRepository.toggleSortMode()
-    local mode = BookRepository.getSortMode()
-    local next_mode = mode == "recent" and "name" or "recent"
-    BookRepository.setSortMode(next_mode)
-    return next_mode
+--- Build a collate item for a book/folder path so BookList.collates can sort
+--- it (they operate on { text, path, attr, ... }). `ui` is the live FileManager
+--- instance (fm), needed by metadata collates (title/authors/series/keywords/
+--- rating) whose item_func calls ui.bookinfo:getDocProps(...). When such a
+--- collate is requested without a `ui`, the caller should have substituted a
+--- safe collate; this guards against a nil index just in case.
+local function makeCollateItem(path, is_file, collate, ui)
+    local item = {
+        text = basename(path),
+        path = path,
+        attr = lfs.attributes(path) or {},
+        is_file = is_file,
+    }
+    local function runItemFunc()
+        if collate and collate.item_func ~= nil then
+            local ok = pcall(collate.item_func, item, ui)
+            if not ok then
+                -- Metadata collate without a usable ui: leave keys unset; the
+                -- comparator's strcoll fallback on item.text still orders it.
+            end
+        end
+    end
+    if is_file then
+        runItemFunc()
+        if item.opened == nil then
+            item.opened = require("ui/widget/booklist").hasBookBeenOpened(path)
+        end
+    elseif collate and collate.can_collate_mixed then
+        runItemFunc()
+    end
+    return item
 end
 
-local function sortBooksByRecent(books)
+--- Sorting comparator for the given collate, wrapping for reverse order.
+--- Mirrors FileChooser:getSortingFunction().
+local function collateSortingFunction(collate, reverse_collate)
+    local sorting = collate.init_sort_func()
+    if reverse_collate then
+        local unreversed = sorting
+        sorting = function(a, b) return unreversed(b, a) end
+    end
+    return sorting
+end
+
+--- FileManager "Book status" filter (menu: filemanager_show_filter). Stored in
+--- G_reader_settings "show_filter".status as a set of visible statuses
+--- ("new"/"reading"/"abandoned"/"complete"); nil means show all. Applies to
+--- books only, matching FileChooser:show_file().
+--- @return function(path)->boolean  true when the book should be shown
+local function makeBookStatusFilter()
+    local show_filter = G_reader_settings:readSetting("show_filter")
+    local status = show_filter and show_filter.status
+    if not status then
+        return function() return true end
+    end
+    local BookList = require("ui/widget/booklist")
+    return function(path)
+        return status[BookList.getBookStatus(path)] == true
+    end
+end
+
+--- Most recently read book in the given directory (independent of the Library
+--- sort mode). Continue hero uses ReadHistory/sidecar semantics, not the
+--- FileManager collate.
+function BookRepository.getLastReadBook(dir)
+    local books = listBooksInDir(dir or BookRepository.resolveBrowseDir())
+    if #books == 0 then return nil end
     local read_times = buildReadTimeMap()
     table.sort(books, function(a, b)
         local ta = getLastReadTime(a, read_times)
@@ -200,29 +293,44 @@ local function sortBooksByRecent(books)
         if ta ~= tb then return ta > tb end
         return ffiUtil.strcoll(basename(a), basename(b))
     end)
-end
-
---- Most recently read book in the given directory (independent of the Recent
---- sort mode).
-function BookRepository.getLastReadBook(dir)
-    local books = listBooksInDir(dir or BookRepository.resolveBrowseDir())
-    if #books == 0 then return nil end
-    sortBooksByRecent(books)
     return books[1]
 end
 
-function BookRepository.getSortedBooks(dir, sort_mode)
-    local books = listBooksInDir(dir or BookRepository.resolveBrowseDir())
-    if #books == 0 then return books end
-    sort_mode = sort_mode or BookRepository.getSortMode()
-    if sort_mode == "name" then
-        table.sort(books, function(a, b)
-            return ffiUtil.strcoll(basename(a), basename(b))
-        end)
-        return books
+--- Books directly inside `dir`, sorted by the current (or given) collate.
+--- Used by the folder-cover mosaic. `ui` is the live FileManager instance,
+--- required by metadata collates; when absent, such collates fall back to
+--- name sorting so the mosaic never crashes on missing doc_props.
+function BookRepository.getSortedBooks(dir, collate_id, ui)
+    local isBookVisible = makeBookStatusFilter()
+    local books = {}
+    for _, fp in ipairs(listBooksInDir(dir or BookRepository.resolveBrowseDir())) do
+        if isBookVisible(fp) then books[#books + 1] = fp end
     end
-    sortBooksByRecent(books)
-    return books
+    if #books == 0 then return books end
+
+    local BookList = require("ui/widget/booklist")
+    local collate = collate_id and BookList.collates[collate_id]
+    if not collate then
+        collate, collate_id = BookRepository.getCollate()
+    end
+    -- Metadata collates need a FileManager ui (ui.bookinfo:getDocProps). Without
+    -- one, sort the mosaic by name instead of risking a nil doc_props.
+    if not ui and UI_DEPENDENT_COLLATES[collate_id] then
+        collate = BookList.collates.strcoll
+    end
+    local reverse = BookRepository.isReverseCollate()
+
+    local items = {}
+    for _, fp in ipairs(books) do
+        items[#items + 1] = makeCollateItem(fp, true, collate, ui)
+    end
+    table.sort(items, collateSortingFunction(collate, reverse))
+
+    local sorted = {}
+    for _, item in ipairs(items) do
+        sorted[#sorted + 1] = item.path
+    end
+    return sorted
 end
 
 --- Whether a book has a usable cover image (best-effort via BookInfoManager).
@@ -233,79 +341,106 @@ local function hasCover(filepath)
     return ok and bi and bi.cover_bb ~= nil
 end
 
---- Books to render inside a folder's mosaic cover: sorted by the current mode,
---- with cover-bearing books pulled to the front, capped at `n` (default 4).
-function BookRepository.getFolderCoverBooks(dir, sort_mode, n)
+--- Books with cover images for a folder's mosaic, in the current sort order,
+--- capped at `n` (default 4). Books without covers are skipped so remaining
+--- mosaic slots can show the folder title instead.
+function BookRepository.getFolderCoverBooks(dir, collate_id, n, ui)
     n = n or 4
-    local books = BookRepository.getSortedBooks(dir, sort_mode)
-    if #books == 0 then return {} end
-    local with_cover, without_cover = {}, {}
-    for _, fp in ipairs(books) do
-        if #with_cover >= n then break end
-        if hasCover(fp) then
-            with_cover[#with_cover + 1] = fp
-        elseif #without_cover < n then
-            without_cover[#without_cover + 1] = fp
-        end
-    end
     local result = {}
-    for _, fp in ipairs(with_cover) do
-        if #result >= n then break end
-        result[#result + 1] = fp
-    end
-    for _, fp in ipairs(without_cover) do
-        if #result >= n then break end
-        result[#result + 1] = fp
+    for _, fp in ipairs(BookRepository.getSortedBooks(dir, collate_id, ui)) do
+        if hasCover(fp) then
+            result[#result + 1] = fp
+            if #result >= n then break end
+        end
     end
     return result
 end
 
---- Most recent read time across all filtered books directly inside `dir`.
-local function getFolderRecentTime(dir, read_times)
-    local books = listBooksInDir(dir)
-    local best = 0
-    for _, fp in ipairs(books) do
-        local t = getLastReadTime(fp, read_times)
-        if t > best then best = t end
-    end
-    return best
+--- FileManager menu options that Home honors too:
+---   reverse_collate — descending order
+---   collate_mixed   — interleave folders and files instead of grouping them
+function BookRepository.isReverseCollate()
+    return G_reader_settings:isTrue("reverse_collate")
 end
 
---- Unified Library entries: filtered books first (in the given sort order),
---- followed by subfolders. Folders sort by name in "name" mode, or by their
---- most recently read contained book (descending) in "recent" mode.
---- @return table list of { type = "book"|"folder", path, name }
-function BookRepository.getLibraryEntries(dir, sort_mode)
-    dir = dir or BookRepository.resolveBrowseDir()
-    sort_mode = sort_mode or BookRepository.getSortMode()
+function BookRepository.isCollateMixed()
+    return G_reader_settings:isTrue("collate_mixed")
+end
 
-    local entries = {}
-    for _, fp in ipairs(BookRepository.getSortedBooks(dir, sort_mode)) do
-        entries[#entries + 1] = { type = "book", path = fp }
+--- Unified Library entries, sorted by KOReader's global FileManager "Sort by"
+--- (collate) setting plus "Reverse sorting" (reverse_collate) and "Sort folders
+--- and files together" (collate_mixed):
+---   mixed (only when collate.can_collate_mixed): books and folders interleaved
+---     and sorted by the same key; reverse flips the combined order.
+---   grouped (default): books first (sorted by the collate), then folders
+---     (always sorted by name, matching FileManager); reverse flips books only.
+--- `ui` is the live FileManager instance (metadata collates call
+--- ui.bookinfo:getDocProps); when absent, those collates fall back to name.
+--- @return table list of { type = "book"|"folder", path, name }
+function BookRepository.getLibraryEntries(dir, collate_id, ui)
+    dir = dir or BookRepository.resolveBrowseDir()
+
+    local BookList = require("ui/widget/booklist")
+    local collate = collate_id and BookList.collates[collate_id]
+    if not collate then
+        collate, collate_id = BookRepository.getCollate()
+    end
+    -- Metadata collates need a FileManager ui. Without one, fall back to name.
+    if not ui and UI_DEPENDENT_COLLATES[collate_id] then
+        collate, collate_id = BookList.collates.strcoll, "strcoll"
+    end
+    local reverse = BookRepository.isReverseCollate()
+    local mixed = collate.can_collate_mixed and BookRepository.isCollateMixed()
+
+    local isBookVisible = makeBookStatusFilter()
+    local books = {}
+    for _, fp in ipairs(listBooksInDir(dir)) do
+        if isBookVisible(fp) then books[#books + 1] = fp end
+    end
+    local subdirs = listSubdirsInDir(dir)
+
+    local function toEntry(item)
+        return { type = item.is_file and "book" or "folder", path = item.path, name = basename(item.path) }
     end
 
-    local subdirs = listSubdirsInDir(dir)
-    if #subdirs > 0 then
-        if sort_mode == "name" then
-            table.sort(subdirs, function(a, b)
-                return ffiUtil.strcoll(basename(a), basename(b))
-            end)
-        else
-            local read_times = buildReadTimeMap()
-            local times = {}
-            for _, d in ipairs(subdirs) do
-                times[d] = getFolderRecentTime(d, read_times)
-            end
-            table.sort(subdirs, function(a, b)
-                if times[a] ~= times[b] then return times[a] > times[b] end
-                return ffiUtil.strcoll(basename(a), basename(b))
-            end)
+    if mixed then
+        -- One combined list sorted by a single collate key.
+        local items = {}
+        for _, fp in ipairs(books) do
+            items[#items + 1] = makeCollateItem(fp, true, collate, ui)
         end
         for _, d in ipairs(subdirs) do
-            entries[#entries + 1] = { type = "folder", path = d, name = basename(d) }
+            items[#items + 1] = makeCollateItem(d, false, collate, ui)
         end
+        table.sort(items, collateSortingFunction(collate, reverse))
+        local entries = {}
+        for _, item in ipairs(items) do
+            entries[#entries + 1] = toEntry(item)
+        end
+        return entries
     end
 
+    -- Grouped: books first (collate-sorted, reversible), then folders. Folders
+    -- are always sorted by name (strcoll) and not reversed, matching FileManager.
+    local book_items = {}
+    for _, fp in ipairs(books) do
+        book_items[#book_items + 1] = makeCollateItem(fp, true, collate, ui)
+    end
+    table.sort(book_items, collateSortingFunction(collate, reverse))
+
+    local folder_items = {}
+    for _, d in ipairs(subdirs) do
+        folder_items[#folder_items + 1] = makeCollateItem(d, false, BookList.collates.strcoll, ui)
+    end
+    table.sort(folder_items, collateSortingFunction(BookList.collates.strcoll, false))
+
+    local entries = {}
+    for _, item in ipairs(book_items) do
+        entries[#entries + 1] = toEntry(item)
+    end
+    for _, item in ipairs(folder_items) do
+        entries[#entries + 1] = toEntry(item)
+    end
     return entries
 end
 

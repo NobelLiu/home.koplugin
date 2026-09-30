@@ -25,14 +25,14 @@ msgstr "Debug mode"
 msgid "Library"
 msgstr "Library"
 
-msgid "Minimum book width"
-msgstr "Minimum book width"
+msgid "Shelf rows"
+msgstr "Shelf rows"
 
-msgid "Minimum book width: %1"
-msgstr "Minimum book width: %1"
+msgid "Shelf rows: %1"
+msgstr "Shelf rows: %1"
 
-msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
-msgstr "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
+msgid "Number of visible shelf rows in the Library. Book size and spacing are computed automatically from the row count. Use a two-finger pinch on the grid to adjust quickly."
+msgstr "Number of visible shelf rows in the Library. Book size and spacing are computed automatically from the row count. Use a two-finger pinch on the grid to adjust quickly."
 
 msgid "Continue reading"
 msgstr "Continue Reading"
@@ -109,3 +109,24 @@ msgstr "Wi-Fi not connected"
 
 msgid "Wi-Fi connected"
 msgstr "Wi-Fi connected"
+
+msgid "Font showcase"
+msgstr "Font showcase"
+
+msgid "Icon showcase"
+msgstr "Icon showcase"
+
+msgid "Font"
+msgstr "Font"
+
+msgid "Icons"
+msgstr "Icons"
+
+msgid "Icons · %1"
+msgstr "Icons · %1"
+
+msgid "Size"
+msgstr "Size"
+
+msgid "Weight"
+msgstr "Weight"

@@ -21,14 +21,14 @@ msgstr "首頁顯示模式"
 msgid "Debug mode"
 msgstr "偵錯模式"
 
-msgid "Minimum book width"
+msgid "Minimal book width"
 msgstr "最小書籍寬度"
 
-msgid "Minimum book width: %1"
-msgstr "最小書籍寬度：%1"
+msgid "Minimal book width: %1 pt"
+msgstr "最小書籍寬度：%1 pt"
 
-msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
-msgstr "書庫網格中書籍封面可使用的最小寬度。最大寬度會自動設定為此值的 1.2 倍。欄數會隨視窗寬度自動調整；數值越小，每行可容納的書籍越多。"
+msgid "Design pt for the smallest book cover width in the Library grid. Converted to device pixels via screen scale. Maximum is 1.2× this value. Smaller values fit more books per row."
+msgstr "書庫網格中書籍封面的最小寬度，單位為設計 pt，會依螢幕縮放轉為裝置像素。最大寬度為此值的 1.2 倍。數值越小，每行可容納的書籍越多。"
 
 msgid "Recent"
 msgstr "最近"

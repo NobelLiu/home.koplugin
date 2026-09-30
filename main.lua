@@ -4,10 +4,10 @@ home.koplugin/main.lua — Plugin entry point and FileManager integration layer.
 Architecture:
   Home is shown as an **overlay** on top of the FileManager (FM), which is
   always kept alive. This lets the user still use KOReader's native menus,
-  plugins and other FM capabilities underneath. Gestures are the exception:
-  while Home is shown, only Home's own gestures are handled, so
-  menu-configured Gestures-plugin gestures never fire on top of Home (see
-  Home:onGesture in ui/home.lua).
+  underneath. Gestures work as follows: while Home is shown, Home's own
+  gestures take priority; unhandled gestures are forwarded to the FileManager
+  (Gestures-plugin zones), and Dispatcher events they emit are forwarded
+  through Home:handleEvent so actions still reach FM modules (see ui/home.lua).
 
   main.lua is responsible for:
     - Showing/hiding the Home overlay
@@ -141,16 +141,25 @@ local function _hideHomeOverlay()
     end
 end
 
+local function _restoreFMInstance()
+    local ok, Home = pcall(require, "ui/home")
+    if ok and Home and Home.liveFileManager then
+        return Home.liveFileManager()
+    end
+    return FileManager.instance
+end
+
 local function _ensureFM()
-    if FileManager.instance then
-        return FileManager.instance
+    local fm = _restoreFMInstance()
+    if fm then
+        return fm
     end
     local home_dir = _getHomeDir()
     if not home_dir then return nil end
     FileManager._home_bypass = true
     FileManager:showFiles(home_dir)
     FileManager._home_bypass = nil
-    return FileManager.instance
+    return _restoreFMInstance()
 end
 
 local function switchToHome()
@@ -182,7 +191,19 @@ end
 -- Show the overlay on boot (only when start_with == "home")
 -- ---------------------------------------------------------------------------
 
+local _boot_overlay_done = false
+
 local function _overlayOnBootIfNeeded()
+    -- HomePlugin:init() runs every time a FileManager instance is created
+    -- (first launch, but also on any FM reinit: refresh, sort change, folder
+    -- navigation to the same view, etc.). The boot overlay must only fire on
+    -- the genuine first launch, otherwise routine FM actions while browsing the
+    -- home directory would keep re-opening Home on top of the file browser.
+    if _boot_overlay_done then
+        return
+    end
+    _boot_overlay_done = true
+
     if G_reader_settings:readSetting("start_with") ~= "home" then
         return
     end
@@ -210,22 +231,26 @@ do
     FileManager.showFiles = function(fm_self, path, ...)
         local extra_args = { ... }
         local home_dir = _getHomeDir()
-        local result = _orig_showFiles(fm_self, path, unpack(extra_args))
+        local should_overlay = not FileManager._home_bypass
+            and home_dir and path
+            and _norm(path) == _norm(home_dir)
+            and G_reader_settings:isTrue("home_active")
 
-        if not FileManager._home_bypass
-                and home_dir and path
-                and _norm(path) == _norm(home_dir)
-                and G_reader_settings:isTrue("home_active") then
-            local ok_h, _ = pcall(require, "ui/home")
-            if ok_h then
-                -- Show Home synchronously (NOT on nextTick): showFiles has just
-                -- queued the FileManager's paint but nothing has been rendered
-                -- yet this tick. By showing the fullscreen Home overlay now, in
-                -- the same tick, UIManager coalesces the pending refreshes and
-                -- only repaints the top-most fullscreen widget (Home) — so the
-                -- FileManager never flashes underneath before Home appears.
+        -- showFiles closes the current FM. If it is already on this path,
+        -- only put Home back — do not tear down the live instance.
+        local live = _restoreFMInstance()
+        if should_overlay and live then
+            local current = live.file_chooser and live.file_chooser.path
+            if current and _norm(current) == _norm(path) then
                 _showHomeOverlay()
+                return
             end
+        end
+
+        local result = _orig_showFiles(fm_self, path, unpack(extra_args))
+        _restoreFMInstance()
+        if should_overlay then
+            _showHomeOverlay()
         end
         return result
     end
@@ -262,11 +287,8 @@ do
             local buttons = _orig_get_default_menu_buttons(self)
             local fm_btn = buttons and buttons.filemanager
             if fm_btn and type(fm_btn.callback) == "function" then
-                -- When this reader was opened from Home, the button both looks
-                -- like and acts like "back to Home" instead of "file browser".
-                if BookRepository.getHomeOrigin() then
-                    fm_btn.icon = "home"
-                end
+                -- Icon reflects where the button actually goes: Home vs file browser.
+                fm_btn.icon = BookRepository.readerBackIcon()
                 fm_btn.callback = function()
                     self:onTapCloseMenu()
                     local file = self.ui.document.file
@@ -319,11 +341,134 @@ do
 end
 
 -- ---------------------------------------------------------------------------
+-- Replace the first FM menu tab with Home's settings while Home is shown
+-- ---------------------------------------------------------------------------
+
+-- The FileManager top menu's first tab is the file-browser "Settings" tab
+-- (id "filemanager_settings", icon "appbar.filebrowser"). While Home is the
+-- active view we swap that tab's icon and contents for Home's own settings, so
+-- the menu reflects Home; when the file browser is active the tab is untouched.
+local HOME_SETTINGS_TAB_ID = "filemanager_settings"
+local HOME_SETTINGS_TAB_ICON = "home"
+
+local function _applyHomeSettingsTab(tab_item_table)
+    if type(tab_item_table) ~= "table" then return end
+    for _idx, tab in ipairs(tab_item_table) do
+        if type(tab) == "table" and tab.id == HOME_SETTINGS_TAB_ID then
+            -- Swap the tab-bar icon.
+            tab.icon = HOME_SETTINGS_TAB_ICON
+            tab.text = _("Home settings")
+            -- Replace the tab's children (stored as array elements) with Home's
+            -- own settings items. Clear existing numeric entries first.
+            for i = #tab, 1, -1 do
+                tab[i] = nil
+            end
+            -- First section: the Home / file-browser toggle, divided from the
+            -- rest. (Rebuilding the tab dropped the toggle that the menu order
+            -- had placed here, so re-add it.)
+            local toggle = {
+                text_func = function()
+                    if _isHomeShown() then
+                        return _("file browser")
+                    end
+                    return _("Home")
+                end,
+                callback = _menuToggleCallback,
+                separator = true,
+            }
+            tab[#tab + 1] = toggle
+            local ok_s, items = pcall(Settings.buildHomeSettingsItems)
+            if ok_s and type(items) == "table" then
+                for i, item in ipairs(items) do
+                    tab[#tab + 1] = item
+                end
+            end
+            return
+        end
+    end
+end
+
+-- ---------------------------------------------------------------------------
 -- Patch Settings → "Start with" to add a "Home" radio option
 -- ---------------------------------------------------------------------------
 do
     local ok, FileManagerMenu = pcall(require, "apps/filemanager/filemanagermenu")
     if ok and FileManagerMenu then
+        -- Home keeps FM on the widget stack while FileManager.instance may be
+        -- nil (e.g. after opening the reader, or right after a showFiles
+        -- transition). Core menus such as screensaver_menu.lua read that
+        -- global at load time (via dofile) and crash when it is nil, so make
+        -- sure a live instance exists before the menu table is built. Prefer
+        -- restoring the on-stack widget; only create one as a last resort.
+        local function _ensureFMForMenu(fmm_self)
+            if _restoreFMInstance() then
+                return
+            end
+            -- No FM widget on the stack: fall back to the menu owner's own UI
+            -- reference, then to creating a fresh instance so the global is
+            -- never nil when the core menu code dereferences it.
+            local owner = fmm_self and (fmm_self.ui or fmm_self.filemanager)
+            if owner and owner.name == "filemanager" then
+                FileManager.instance = owner
+                return
+            end
+            _ensureFM()
+        end
+        if not FileManagerMenu._home_setUpdateItemTable_orig then
+            FileManagerMenu._home_setUpdateItemTable_orig = FileManagerMenu.setUpdateItemTable
+            function FileManagerMenu:setUpdateItemTable(...)
+                _ensureFMForMenu(self)
+                -- The core builder (menusorter) crashes with
+                -- "bad argument #1 to 'ipairs' (table expected, got nil)" when
+                -- it runs before the menu registry is populated: self.menu_items
+                -- ends up empty, so order ids (including "KOMenu:menu_buttons")
+                -- resolve to nil. This can happen when the menu is triggered too
+                -- early in the FM lifecycle. Guard the original call so a
+                -- not-yet-ready menu degrades to a no-op rebuild instead of
+                -- taking the whole process down.
+                local packed = { pcall(FileManagerMenu._home_setUpdateItemTable_orig, self, ...) }
+                local ok = packed[1]
+                if not ok then
+                    logger.warn("home.koplugin: setUpdateItemTable skipped (menu not ready):", packed[2])
+                    -- Leave any previously built table untouched; do not mark
+                    -- it as built so a later, well-timed call can rebuild it.
+                    return
+                end
+                -- Drop the pcall status flag; the rest is the original result.
+                table.remove(packed, 1)
+                local result = packed
+                -- When Home is the active view, replace the first menu tab (the
+                -- file-browser "Settings" tab) with Home's own settings, and swap
+                -- its icon, so the top menu reflects Home instead of the file
+                -- browser. When FM is active, the original tab is left intact.
+                local home_shown = _isHomeShown()
+                if home_shown then
+                    local ok_tab, tab_err = pcall(_applyHomeSettingsTab, self.tab_item_table)
+                    if not ok_tab then
+                        logger.warn("home.koplugin: failed to apply Home settings tab:", tab_err)
+                    end
+                end
+                -- Remember which mode this cached table was built for, so
+                -- onShowMenu can rebuild when the mode changes.
+                self._home_tab_built_for_home = home_shown
+                return unpack(result)
+            end
+        end
+        if not FileManagerMenu._home_onShowMenu_orig then
+            FileManagerMenu._home_onShowMenu_orig = FileManagerMenu.onShowMenu
+            function FileManagerMenu:onShowMenu(...)
+                _ensureFMForMenu(self)
+                -- The tab table is cached after the first build. Invalidate it
+                -- when the Home/FM mode changed since, so the first tab reflects
+                -- the current view (Home settings vs file-browser settings).
+                if self.tab_item_table ~= nil
+                        and self._home_tab_built_for_home ~= _isHomeShown() then
+                    self.tab_item_table = nil
+                end
+                return FileManagerMenu._home_onShowMenu_orig(self, ...)
+            end
+        end
+
         if not FileManagerMenu._home_startwith_orig then
             FileManagerMenu._home_startwith_orig = FileManagerMenu.getStartWithMenuTable
         end
@@ -397,22 +542,60 @@ function HomePlugin:onDispatcherRegisterActions()
     })
 end
 
--- Register the toggle item into the FM main menu order, migrating the old
--- "newhome_toggle" id and avoiding duplicate insertions.
+-- Register Home items into the FM/reader menus. The Home/file-browser toggle
+-- goes at the very top of the first menu tab (filemanager_settings), in its own
+-- section separated by a divider. Migrates the old "newhome_toggle" id and is
+-- idempotent across re-inits.
+local SETTINGS_DIVIDER = "----------------------------"
+
+local function _removeMenuId(list, id)
+    for i = #list, 1, -1 do
+        if list[i] == id then
+            table.remove(list, i)
+        end
+    end
+end
+
 local function _registerMenuOrder()
     pcall(function()
-        local order = require("ui/elements/filemanager_menu_order")
-        local main = order["main"]
-        if not main then return end
-        for i, id in ipairs(main) do
-            if id == "newhome_toggle" then
-                main[i] = "home_toggle"
+        local function patch(order_module)
+            local ok, order = pcall(require, order_module)
+            if not ok or type(order) ~= "table" then
+                return
+            end
+            -- Migrate legacy id everywhere it might still live.
+            for _key, group in pairs(order) do
+                if type(group) == "table" then
+                    for i, id in ipairs(group) do
+                        if id == "newhome_toggle" then
+                            group[i] = "home_toggle"
+                        end
+                    end
+                end
+            end
+
+            -- The toggle used to live in the "main" tab; move it to the first
+            -- tab's first section. Remove any stale copies first.
+            if order["main"] then
+                _removeMenuId(order["main"], "home_toggle")
+            end
+
+            -- Prepend "home_toggle" + a divider to the first tab. Reader has no
+            -- filemanager_settings group, so fall back to the main tab there.
+            local first = order["filemanager_settings"] or order["main"]
+            if first then
+                local present = false
+                for _, id in ipairs(first) do
+                    if id == "home_toggle" then present = true break end
+                end
+                if not present then
+                    table.insert(first, 1, SETTINGS_DIVIDER)
+                    table.insert(first, 1, "home_toggle")
+                end
             end
         end
-        for i, id in ipairs(main) do
-            if id == "home_toggle" then return end
-        end
-        table.insert(main, 1, "home_toggle")
+        patch("ui/elements/filemanager_menu_order")
+        patch("ui/elements/reader_menu_order")
     end)
 end
 

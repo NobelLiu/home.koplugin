@@ -21,14 +21,14 @@ msgstr "Режим відображення головної"
 msgid "Debug mode"
 msgstr "Режим налагодження"
 
-msgid "Minimum book width"
+msgid "Minimal book width"
 msgstr "Мінімальна ширина книги"
 
-msgid "Minimum book width: %1"
-msgstr "Мінімальна ширина книги: %1"
+msgid "Minimal book width: %1 pt"
+msgstr "Мінімальна ширина книги: %1 pt"
 
-msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
-msgstr "Найменша ширина, яку може мати обкладинка книги в сітці бібліотеки. Максимальна ширина автоматично обчислюється як 1,2 від цього значення. Кількість стовпців адаптується до ширини вікна; менші значення дають змогу розмістити більше книг у рядку."
+msgid "Design pt for the smallest book cover width in the Library grid. Converted to device pixels via screen scale. Maximum is 1.2× this value. Smaller values fit more books per row."
+msgstr "Дизайн-пункти (pt) для найменшої ширини обкладинки в сітці бібліотеки. Перераховуються в пікселі пристрою за масштабом екрана. Максимум — 1,2 від цього значення. Менші значення дають змогу розмістити більше книг у рядку."
 
 msgid "Recent"
 msgstr "Нещодавні"

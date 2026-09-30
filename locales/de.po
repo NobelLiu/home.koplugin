@@ -21,14 +21,14 @@ msgstr "Startseiten-Anzeigemodus"
 msgid "Debug mode"
 msgstr "Debug-Modus"
 
-msgid "Minimum book width"
+msgid "Minimal book width"
 msgstr "Minimale Buchbreite"
 
-msgid "Minimum book width: %1"
-msgstr "Minimale Buchbreite: %1"
+msgid "Minimal book width: %1 pt"
+msgstr "Minimale Buchbreite: %1 pt"
 
-msgid "The smallest width a book cover may use in the Library grid. The maximum width is derived automatically as 1.2x this value. The number of columns adapts to the window width; smaller values fit more books per row."
-msgstr "Die kleinste Breite, die ein Buchcover im Bibliotheksraster verwenden darf. Die maximale Breite wird automatisch als das 1,2-fache dieses Werts abgeleitet. Die Spaltenanzahl passt sich der Fensterbreite an; kleinere Werte ermöglichen mehr Bücher pro Reihe."
+msgid "Design pt for the smallest book cover width in the Library grid. Converted to device pixels via screen scale. Maximum is 1.2× this value. Smaller values fit more books per row."
+msgstr "Design-pt für die kleinste Buchcover-Breite im Bibliotheksraster. Wird über den Bildschirmmaßstab in Gerätepixel umgerechnet. Das Maximum beträgt das 1,2-fache dieses Werts. Kleinere Werte ermöglichen mehr Bücher pro Reihe."
 
 msgid "Recent"
 msgstr "Zuletzt"

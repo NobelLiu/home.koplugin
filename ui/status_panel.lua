@@ -4,18 +4,18 @@ status_panel.lua — Right-anchored, full-height quick status / control panel.
 Opened by tapping the icon cluster (right region) of the Home status bar.
 Visual model (see design spec):
   * A vertical panel occupying the golden-ratio width (0.618 * screen width),
-    anchored to the right edge, full screen height, with a 1px black left
-    border. The remaining left strip is a tap-to-close scrim.
+    anchored to the right edge, full screen height, with a left border matching
+    the status bar bottom divider. The remaining left strip is a tap-to-close scrim.
   * Rows are stacked from the top. Each row height equals the Home status bar
-    height, uses the same font ("ffont") and nerd-font icon glyphs, has a 1px
-    gray bottom border, and lays out a left content area (20px inset) vs a
-    trailing row_h x row_h square icon/control box on the right.
+    height, uses HIG Headline (same as the status bar), has a bottom divider
+    matching the status bar hairline, and lays out a left content area (20px inset) vs a trailing
+    row_height x row_height square icon/control box on the right.
 
 Rows (top to bottom):
   1. Close (X) — right-aligned square box.
   2. Charge   — battery symbol + percentage (+ "charging"), read-only.
   3. Wi-Fi    — label/status tap opens network info; trailing icon toggles Wi-Fi.
-  4. Brightness — a slider (min -> max, far left turns the frontlight off);
+  4. Brightness — a slider (0 = off, 1..max = on; far left turns the frontlight off);
      trailing icon toggles night mode.
 --]]
 
@@ -24,16 +24,16 @@ local Blitbuffer = require("ffi/blitbuffer")
 local CenterContainer = require("ui/widget/container/centercontainer")
 local Device = require("device")
 local Event = require("ui/event")
-local Font = require("ui/font")
 local FrameContainer = require("ui/widget/container/framecontainer")
 local Geom = require("ui/geometry")
 local GestureRange = require("ui/gesturerange")
 local InputContainer = require("ui/widget/container/inputcontainer")
 local LeftContainer = require("ui/widget/container/leftcontainer")
+local Layout = require("ui/common/layout")
+local pt = Layout.pt
 local LineWidget = require("ui/widget/linewidget")
 local OverlapGroup = require("ui/widget/overlapgroup")
 local RightContainer = require("ui/widget/container/rightcontainer")
-local Size = require("ui/size")
 local Slider = require("ui/common/slider")
 local TextWidget = require("ui/widget/textwidget")
 local UIManager = require("ui/uimanager")
@@ -42,29 +42,29 @@ local VerticalSpan = require("ui/widget/verticalspan")
 local _ = require("gettext")
 local Screen = Device.screen
 
--- Nerd-font glyphs (rendered by the "ffont" face via the symbols.ttf fallback,
--- exactly like the Home status bar).
-local CLOSE_ICON = "\u{E855}"           -- xmark
-local WIFI_ON_ICON = "\u{ECA8}"         -- wifi (on: connected or not connected)
-local WIFI_OFF_ICON = "\u{ECA9}"        -- wifi off / disabled
-local WIFI_CONNECTING_ICON = "\u{E8D7}" -- dots-horizontal (connecting in progress)
-local SUN_ICON = "\u{ECA7}"   -- sun: night mode off (light mode)
-local MOON_ICON = "\u{EC93}"  -- moon: night mode on
+local Theme = require("ui/uikit/components/theme")
 
 -- Golden-ratio panel width.
 local PANEL_WIDTH_RATIO = 0.618
+local PANEL_BORDER_COLOR = Layout.COLOR_COVER_BORDER
+local PANEL_BORDER_SIZE = pt(Layout.dim.border)
 
 local StatusPanel = InputContainer:extend{
     name = "home_status_panel",
     modal = true,
     covers_fullscreen = true,
     -- Row height (== Home status bar height); set by the caller, else derived.
-    row_h = nil,
+    row_height = nil,
 }
 
---- Same face as the status bar (menu-footer device info): "ffont".
+local STATUS_ROLE = "headline"
+
 local function barFace()
-    return Font:getFace("ffont")
+    return Theme.face(STATUS_ROLE)
+end
+
+local function iconFace()
+    return Theme.symbolFace(STATUS_ROLE)
 end
 
 local function barText(text)
@@ -78,20 +78,19 @@ local function barText(text)
 end
 
 function StatusPanel:init()
-    self.screen_w = Screen:getWidth()
-    self.screen_h = Screen:getHeight()
+    self.screen_width = Screen:getWidth()
+    self.screen_height = Screen:getHeight()
     self.powerd = Device:getPowerDevice()
 
-    -- Row height matches the status bar; fall back to the font line height plus
-    -- the same top/bottom padding the status bar uses.
-    if not self.row_h or self.row_h <= 0 then
-        self.row_h = barText("Ay"):getSize().h + 2 * Size.padding.large
+    -- Row height matches the status bar; fall back to measured chrome height.
+    if not self.row_height or self.row_height <= 0 then
+        self.row_height = pt(Layout.dim.status_bar)
     end
 
-    self.panel_w = math.floor(self.screen_w * PANEL_WIDTH_RATIO)
-    self.panel_x = self.screen_w - self.panel_w
-    self.left_pad = Size.padding.large * 2 -- design 20
-    self.icon_box = self.row_h             -- trailing square icon box (row_h x row_h)
+    self.panel_width = math.floor(self.screen_width * PANEL_WIDTH_RATIO)
+    self.panel_x = self.screen_width - self.panel_width
+    self.left_padding = pt(Layout.pad.bar)
+    self.icon_box = self.row_height             -- trailing square icon box (row_height x row_height)
 
     -- Ordered list of rows, so tap hit-testing can map y -> row without
     -- hardcoding indices (rows are added conditionally).
@@ -104,7 +103,7 @@ function StatusPanel:init()
         self.ges_events.TapClose = {
             GestureRange:new{
                 ges = "tap",
-                range = Geom:new{ x = 0, y = 0, w = self.screen_w, h = self.screen_h },
+                range = Geom:new{ x = 0, y = 0, w = self.screen_width, h = self.screen_height },
             },
         }
     end
@@ -112,71 +111,63 @@ function StatusPanel:init()
     self:build()
 end
 
---- A trailing square (row_h x row_h) box with a centered icon glyph widget.
---- The glyph is wrapped in a FrameContainer so the box can flash-invert on tap
---- (the same feedback as Library's buttons). Returns:
----   box    - the container to place in the row,
----   glyph  - the inner TextWidget (so its glyph can change),
----   frame  - the invertible FrameContainer (for tap feedback).
-function StatusPanel:_iconBox(glyph)
-    local glyph_widget = barText(glyph)
+--- A trailing square (row_height x row_height) box with a centered icon glyph widget.
+--- Returns box, glyph_widget (same frame reference for glyph updates).
+function StatusPanel:_iconBox(glyph, face)
+    local glyph_widget = TextWidget:new{
+        text = glyph,
+        face = face or iconFace(),
+        fgcolor = Blitbuffer.COLOR_BLACK,
+        padding = 0,
+        bold = false,
+    }
     local frame = FrameContainer:new{
         bordersize = 0,
         padding = 0,
         margin = 0,
         CenterContainer:new{
-            dimen = Geom:new{ w = self.icon_box, h = self.row_h },
+            dimen = Geom:new{ w = self.icon_box, h = self.row_height },
             glyph_widget,
         },
     }
     return frame, glyph_widget, frame
 end
 
---- Flash-invert an icon box's frame as tap feedback, mirroring TapCell (and
---- thus Library's buttons).
-function StatusPanel:_flashIcon(frame)
-    if not (frame and frame.dimen) then return end
-    frame.invert = true
-    UIManager:widgetInvert(frame, frame.dimen.x, frame.dimen.y)
-    UIManager:setDirty(nil, "fast", frame.dimen)
-    UIManager:forceRePaint()
-    frame.invert = false
-    UIManager:widgetInvert(frame, frame.dimen.x, frame.dimen.y)
-    UIManager:setDirty(nil, "fast", frame.dimen)
-end
-
---- Assemble one row_h-tall row: `left_widget` in the left content area
---- (20px inset), `right_box` as the trailing square, plus a 1px black bottom
---- border. `kind` records the row for tap dispatch.
+--- Assemble one row_height-tall row: `left_widget` in the left content area
+--- (20px inset), `right_box` as the trailing square, plus a bottom divider
+--- matching the status bar hairline. `kind` records the row for tap dispatch.
 function StatusPanel:_makeRow(kind, left_widget, right_box)
     self.row_kinds[#self.row_kinds + 1] = kind
-    local content_w = self.panel_w
+    local content_width = self.panel_width
 
     local left = LeftContainer:new{
-        dimen = Geom:new{ w = content_w - self.icon_box, h = self.row_h },
+        dimen = Geom:new{
+            w = math.max(0, math.floor(content_width - self.icon_box)),
+            h = self.row_height,
+        },
         FrameContainer:new{
             bordersize = 0,
             padding = 0,
-            padding_left = self.left_pad,
+            padding_left = self.left_padding,
             left_widget,
         },
     }
     local right = RightContainer:new{
-        dimen = Geom:new{ w = content_w, h = self.row_h },
+        dimen = Geom:new{ w = content_width, h = self.row_height },
         right_box,
     }
-    -- 1px gray line pinned to the bottom of the row.
+    -- Bottom hairline (same token as the status bar divider).
     local border = VerticalGroup:new{
         align = "left",
-        VerticalSpan:new{ width = self.row_h - Size.line.thick },
+        VerticalSpan:new{ width = self.row_height - PANEL_BORDER_SIZE },
         LineWidget:new{
-            dimen = Geom:new{ w = content_w, h = Size.line.thick },
-            background = Blitbuffer.COLOR_GRAY_E,
+            dimen = Geom:new{ w = content_width, h = PANEL_BORDER_SIZE },
+            background = PANEL_BORDER_COLOR,
         },
     }
 
     return OverlapGroup:new{
-        dimen = Geom:new{ w = content_w, h = self.row_h },
+        dimen = Geom:new{ w = content_width, h = self.row_height },
         left,
         right,
         border,
@@ -189,7 +180,7 @@ function StatusPanel:_buildChargeRow()
     local text, sym = self:_chargeState()
     local label = barText(text)
     self.charge_label_glyph = label
-    local icon, glyph, frame = self:_iconBox(BD.wrap(sym))
+    local icon, glyph, frame = self:_iconBox(BD.wrap(sym), iconFace())
     self.charge_icon_glyph = glyph
     self.charge_frame = frame
     return self:_makeRow("charge", label, icon)
@@ -206,9 +197,7 @@ function StatusPanel:_chargeState()
             local charging, charged = false, false
             pcall(function() charging = self.powerd:isCharging() end)
             pcall(function() charged = self.powerd:isCharged() end)
-            pcall(function()
-                sym = self.powerd:getBatterySymbol(charged, charging, cap) or ""
-            end)
+            sym = Theme.batteryGlyph(charged, charging, cap)
             text = string.format("%d%%", cap)
             if charging then
                 text = text .. " " .. _("Charging")
@@ -283,14 +272,14 @@ function StatusPanel:_wifiState()
 end
 
 --- Map a Wi-Fi status (see _wifiState) to its trailing icon glyph.
-local WIFI_STATUS_ICON = {
-    off = WIFI_OFF_ICON,
-    connecting = WIFI_CONNECTING_ICON,
-    disconnected = WIFI_ON_ICON,
-    connected = WIFI_ON_ICON,
-}
 local function wifiStatusIcon(status)
-    return WIFI_STATUS_ICON[status] or WIFI_OFF_ICON
+    if status == "connecting" then
+        return Theme.icon.ellipsis
+    end
+    if status == "off" then
+        return Theme.icon.wifi_off
+    end
+    return Theme.icon.wifi
 end
 
 function StatusPanel:_buildWifiRow()
@@ -303,36 +292,28 @@ function StatusPanel:_buildWifiRow()
     return self:_makeRow("wifi", label, icon)
 end
 
---- Brightness row: a slider (min -> max) + trailing brightness icon.
+--- Brightness row: a slider (0 = off, 1..max = on) + trailing brightness icon.
 function StatusPanel:_buildBrightnessRow()
     self.fl = {
-        -- The slider's minimum is the native off level (fl_min): dragging all
-        -- the way to the left turns the frontlight off. The trailing icon box
-        -- toggles night mode instead (see onToggleNightMode).
-        min = self.powerd.fl_min,
+        -- UI range uses 0 for "off", matching KOReader's FrontLightWidget and
+        -- powerd:frontlightIntensity() (which reports 0 while off even when the
+        -- native HW floor fl_min is > 0, e.g. on Android).
+        min = 0,
         max = self.powerd.fl_max,
         cur = 0,
     }
-    -- Start the slider where the light actually is: the remembered intensity
-    -- when on (frontlightIntensity() reports 0 while off), the min (= off) when
-    -- off.
     pcall(function()
-        if self.powerd:isFrontlightOn() then
-            self.fl.cur = self:_rememberedIntensity()
-        else
-            self.fl.cur = self.fl.min
-        end
+        self.fl.cur = self.powerd:frontlightIntensity()
     end)
 
-    -- _makeRow already insets the left widget by one left_pad and reserves the
-    -- trailing icon box, so the slider spans exactly from left_pad to the icon
+    -- _makeRow already insets the left widget by one left_padding and reserves the
+    -- trailing icon box, so the slider spans exactly from left_padding to the icon
     -- box (aligning with the other rows' left content), with no extra wrapper.
-    local track_w = self.panel_w - self.icon_box - self.left_pad
+    local track_width = math.max(0, math.floor(self.panel_width - self.icon_box - self.left_padding))
     self.fl_slider = Slider:new{
-        -- Slider scales its `width` from design px, but here we already have a
-        -- device-px track width and row height, so pass them pre-scaled.
-        width_px = track_w,
-        height_px = self.row_h,
+        -- Slider width/height are design pt; pass pre-scaled device px here.
+        width_px = track_width,
+        height_px = self.row_height,
         min = self.fl.min,
         max = self.fl.max,
         value = self.fl.cur,
@@ -354,14 +335,14 @@ end
 --- The trailing icon glyph for the current night mode state.
 function StatusPanel:_nightModeGlyph()
     local on = G_reader_settings:isTrue("night_mode")
-    return on and MOON_ICON or SUN_ICON
+    return on and Theme.icon.moon or Theme.icon.sun
 end
 
 function StatusPanel:build()
     local rows = VerticalGroup:new{ align = "left" }
 
     -- Row 1: close (right-aligned square box; empty left content).
-    local close_box, _cg, close_frame = self:_iconBox(CLOSE_ICON)
+    local close_box, _cg, close_frame = self:_iconBox(Theme.icon.close)
     self.close_frame = close_frame
     rows[#rows + 1] = self:_makeRow("close", barText(""), close_box)
 
@@ -379,43 +360,43 @@ function StatusPanel:build()
     end
 
     -- Panel: golden-ratio width, full height, white, top-aligned rows, with a
-    -- 1px black left border.
+    -- left border matching the status bar bottom divider.
     self.panel = OverlapGroup:new{
-        dimen = Geom:new{ w = self.panel_w, h = self.screen_h },
+        dimen = Geom:new{ w = self.panel_width, h = self.screen_height },
         FrameContainer:new{
             bordersize = 0,
             padding = 0,
             margin = 0,
             background = Blitbuffer.COLOR_WHITE,
-            width = self.panel_w,
-            height = self.screen_h,
+            width = self.panel_width,
+            height = self.screen_height,
             rows,
         },
         LineWidget:new{
-            dimen = Geom:new{ w = Size.line.thick, h = self.screen_h },
-            background = Blitbuffer.COLOR_BLACK,
+            dimen = Geom:new{ w = PANEL_BORDER_SIZE, h = self.screen_height },
+            background = PANEL_BORDER_COLOR,
         },
     }
 
     self.frame = self.panel
     self[1] = RightContainer:new{
-        dimen = Geom:new{ x = 0, y = 0, w = self.screen_w, h = self.screen_h },
+        dimen = Geom:new{ x = 0, y = 0, w = self.screen_width, h = self.screen_height },
         self.panel,
     }
 end
 
 --- Screen-space rect of the whole panel.
 function StatusPanel:_panelRect()
-    return Geom:new{ x = self.panel_x, y = 0, w = self.panel_w, h = self.screen_h }
+    return Geom:new{ x = self.panel_x, y = 0, w = self.panel_width, h = self.screen_height }
 end
 
 --- Screen-space rect of the trailing square icon box for a given row index.
 function StatusPanel:_iconBoxRect(row_index)
     return Geom:new{
-        x = self.screen_w - self.icon_box,
-        y = (row_index - 1) * self.row_h,
+        x = self.screen_width - self.icon_box,
+        y = (row_index - 1) * self.row_height,
         w = self.icon_box,
-        h = self.row_h,
+        h = self.row_height,
     }
 end
 
@@ -423,9 +404,9 @@ end
 function StatusPanel:_rowRect(row_index)
     return Geom:new{
         x = self.panel_x,
-        y = (row_index - 1) * self.row_h,
-        w = self.panel_w,
-        h = self.row_h,
+        y = (row_index - 1) * self.row_height,
+        w = self.panel_width,
+        h = self.row_height,
     }
 end
 
@@ -538,19 +519,6 @@ function StatusPanel:_refreshWifiIcon()
     UIManager:setDirty(self, "ui", self:_panelRect())
 end
 
---- The last intensity level the light was set to (`fl_intensity`), kept
---- independent of whether the light is currently on or off, so toggling the
---- light back on restores the level the user picked. `frontlightIntensity()`
---- reports 0 while the light is off, which is why we read the remembered value
---- instead.
-function StatusPanel:_rememberedIntensity()
-    local level = self.powerd.fl_intensity
-    if type(level) ~= "number" or level < self.fl.min then
-        level = self.fl.cur
-    end
-    return level
-end
-
 --- Toggle night mode (panel-local action): close the panel first, then flip
 --- the screen colors. The panel has to be gone before the repaint, because it
 --- covers the full screen while open, so _repaint skips the widgets underneath
@@ -563,12 +531,14 @@ end
 --- directly (the CRe call-cache reset there only applies to an open document,
 --- which never exists under this panel).
 function StatusPanel:onToggleNightMode()
-    self:onClose()
     local night_mode = G_reader_settings:isTrue("night_mode")
+    -- Persist first so Home's status bar (resumed on close) paints sun/moon
+    -- for the theme we are switching to.
+    G_reader_settings:saveSetting("night_mode", not night_mode)
+    self:onClose()
     Screen:toggleNightMode()
     UIManager:setDirty("all", "full")
     UIManager:ToggleNightMode(not night_mode)
-    G_reader_settings:saveSetting("night_mode", not night_mode)
     return true
 end
 
@@ -583,17 +553,18 @@ function StatusPanel:_refreshBrightness()
     UIManager:setDirty(self, "ui", self:_panelRect())
 end
 
---- Apply a brightness from the slider. The slider minimum (fl_min) is the
---- "off" position: dragging all the way to the left toggles the frontlight
---- off. Any other position sets the native intensity, which also turns the
---- light back on if it was off.
+--- Apply a brightness from the slider. 0 is "off" (toggle off when on); any
+--- other value sets the native intensity in [fl_min, fl_max], which also
+--- turns the light back on if it was off.
 function StatusPanel:_setBrightness(intensity)
     -- Guard against the slider callback re-entering while we sync it back below.
     if self._applying_brightness then return end
     self._applying_brightness = true
 
-    if intensity <= self.fl.min then
-        pcall(function() self.powerd:toggleFrontlight() end)
+    if intensity == 0 then
+        if self.powerd:isFrontlightOn() then
+            pcall(function() self.powerd:toggleFrontlight() end)
+        end
     else
         intensity = math.max(self.powerd.fl_min, math.min(self.fl.max, intensity))
         pcall(function() self.powerd:setIntensity(intensity) end)
@@ -617,7 +588,6 @@ function StatusPanel:onTapClose(_, ges)
     -- Close row: tapping its icon box (or anywhere on the row) closes.
     local close_i = self:_rowIndex("close")
     if close_i and ges.pos:intersectWith(self:_rowRect(close_i)) then
-        self:_flashIcon(self.close_frame)
         self:onClose()
         return true
     end
@@ -625,7 +595,6 @@ function StatusPanel:onTapClose(_, ges)
     -- Charge row: tapping anywhere (label or icon) opens battery statistics.
     local charge_i = self:_rowIndex("charge")
     if charge_i and ges.pos:intersectWith(self:_rowRect(charge_i)) then
-        self:_flashIcon(self.charge_frame)
         self:onShowBatteryStats()
         return true
     end
@@ -634,7 +603,6 @@ function StatusPanel:onTapClose(_, ges)
     local wifi_i = self:_rowIndex("wifi")
     if wifi_i and ges.pos:intersectWith(self:_rowRect(wifi_i)) then
         if ges.pos:intersectWith(self:_iconBoxRect(wifi_i)) then
-            self:_flashIcon(self.wifi_frame)
             self:onToggleWifi()
         else
             self:onShowWifiInfo()
@@ -646,7 +614,6 @@ function StatusPanel:onTapClose(_, ges)
     -- (The slider itself handles taps/drags over its own area.)
     local bright_i = self:_rowIndex("brightness")
     if bright_i and ges.pos:intersectWith(self:_iconBoxRect(bright_i)) then
-        self:_flashIcon(self.night_mode_frame)
         self:onToggleNightMode()
         return true
     end

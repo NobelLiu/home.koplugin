@@ -14,6 +14,7 @@ so a Home rebuild/close (which frees the widget) cancels any in-flight reveal.
 
 local Blitbuffer = require("ffi/blitbuffer")
 local Layout = require("ui/common/layout")
+local TextBoxWidget = require("ui/widget/textboxwidget")
 local TextWidget = require("ui/widget/textwidget")
 local UIManager = require("ui/uimanager")
 local util = require("util")
@@ -29,6 +30,10 @@ TypewriterLabel.START_DELAY = 0.5
 ---   bold = bool (default true),
 ---   fgcolor = Blitbuffer color (default COLOR_BLACK),
 ---   max_width = number,
+---   width = number (TextBoxWidget wrap width; wrapping, no line cap),
+---   height = number (optional locked wrap-box height),
+---   line_height = number (TextBoxWidget extra em, when wrapping),
+---   bgcolor = Blitbuffer color (when wrapping),
 ---   animate = bool (whether this instance should reveal char-by-char),
 ---   on_finish = function (optional, called once the full text is revealed;
 ---     for a non-animated label this fires immediately on :play()),
@@ -47,14 +52,29 @@ function TypewriterLabel.build(opts)
     -- reserved height).
     local will_animate = opts.animate and #chars > 1 and interval > 0
 
-    local label = TextWidget:new{
-        text = text,
-        face = opts.face,
-        fgcolor = opts.fgcolor or Blitbuffer.COLOR_BLACK,
-        bold = opts.bold ~= false,
-        max_width = opts.max_width,
-        padding = 0,
-    }
+    local label
+    if opts.width then
+        label = TextBoxWidget:new{
+            text = text,
+            face = opts.face,
+            width = opts.width,
+            height = opts.height,
+            bold = opts.bold ~= false,
+            fgcolor = opts.fgcolor or Blitbuffer.COLOR_BLACK,
+            bgcolor = opts.bgcolor,
+            line_height = opts.line_height,
+            alignment = "left",
+        }
+    else
+        label = TextWidget:new{
+            text = text,
+            face = opts.face,
+            fgcolor = opts.fgcolor or Blitbuffer.COLOR_BLACK,
+            bold = opts.bold ~= false,
+            max_width = opts.max_width,
+            padding = 0,
+        }
+    end
 
     -- Measure the label at its full text so tap-areas/layout are sized for the
     -- final string, then (when animating) swap in the zero-width-space
@@ -62,6 +82,9 @@ function TypewriterLabel.build(opts)
     -- and would collapse the layout, so the placeholder still reserves height.
     local measured = label:getSize()
     local full_size = { w = measured.w, h = measured.h }
+    if opts.width and not opts.height then
+        label.height = measured.h
+    end
     if will_animate then
         label:setText("\u{200B}")
     end
