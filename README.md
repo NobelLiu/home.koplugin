@@ -43,7 +43,7 @@ To go back to the regular file browser, use the same menu toggle or pick a diffe
 
 ## Installation
 
-Download from the [latest release](releases/latest), rename to `home.koplugin`, copy into your KOReader `plugins/` directory, then restart KOReader.
+[Download](https://github.com/NobelLiu/home.koplugin/releases/latest) and rename to `home.koplugin`, copy into your KOReader `plugins/` directory, then restart KOReader.
 Enable it from the FileManager main menu or set it as your start screen.
 
 ---
